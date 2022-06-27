@@ -684,10 +684,11 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < stringList.size(); i++) {
                         try {
                             String s = stringList.get(i);
+                            LoggerUtil.logI(TAG,"sss  687---->"+s);
                             String[] split = s.split("-");
                             String s1 = split[1];
 
-                            if (s1.equals("文字")) {
+                            if (s1.equals("wenzi")) {
                                 String txt = "";
                                 if (split[2].contains("enter")) {
                                     try {
@@ -702,22 +703,22 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 dataList.set(i, new LocalReplyBean(txt, dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
-                            } else if (s1.equals("语音")) {
+                            } else if (s1.equals("yuyin")) {
                                 dataList.set(i, new LocalReplyBean("语音:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
-                            } else if (s1.equals("图片")) {
+                            } else if (s1.equals("tupian")) {
                                 dataList.set(i, new LocalReplyBean("图片:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
                             } else if (s1.equals("gif")) {
                                 dataList.set(i, new LocalReplyBean("gif:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
-                            } else if (s1.equals("弹语音")) {
+                            } else if (s1.equals("tanyuyin")) {
                                 dataList.set(i, new LocalReplyBean("弹语音:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
-                            } else if (s1.equals("收藏")) {
+                            } else if (s1.equals("shoucang")) {
                                 dataList.set(i, new LocalReplyBean("收藏:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
-                            } else if (s1.equals("视频")) {
+                            } else if (s1.equals("shipin")) {
                                 dataList.set(i, new LocalReplyBean("视频:" + split[2], dataList.get(i).getTime()));
                                 adapter.setDatas(dataList);
                             }

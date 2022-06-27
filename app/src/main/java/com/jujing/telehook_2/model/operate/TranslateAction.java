@@ -163,7 +163,18 @@ public class TranslateAction {
             }
         }
         if (text.equalsIgnoreCase("hi")||text.equalsIgnoreCase("hello")) {
+            WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
             return "error";
+        }
+
+        String c = text.toLowerCase();
+        if (c.contains("okk")){
+            LoggerUtil.logI(TAG + talker_id, "c 172: " + c);
+            String c1 = c.replace(".", "");
+            if (c1.equals("okk")){
+                WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
+                return "error";
+            }
         }
 
         final String[] result2 = {""};

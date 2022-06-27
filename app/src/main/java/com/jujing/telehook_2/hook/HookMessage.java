@@ -457,8 +457,6 @@ public class HookMessage {
                                     String result = TranslateAction.post(from_id + "", message.toString(), "zh");
                                     LoggerUtil.logI(TAG + from_id, "result 419--->" + result + "----->" + message.toString());
                                     jsonObjectCurrent.put("content", result);
-
-
                                 } else if (msg_type.equals("image")) {//图片
                                     jsonObjectCurrent.put("msg_type", "image");
                                 } else if (msg_type.equals("voice")) {//语音
@@ -532,12 +530,12 @@ public class HookMessage {
                                                                             String string = msg_list.getString(i);
                                                                             JSONObject msgObj = new JSONObject(string);
                                                                             LoggerUtil.logI(TAG + from_id, "msgObj  225----->" + i + "---->" + msg_list.length() + "----->" + msgObj + "----->" + from_id);
-                                                                            handleMessages(msgObj, from_id, 0L, key_word_reply, "",need_translate);
+                                                                            handleMessages(msgObj, from_id, 0L, key_word_reply, "", need_translate);
                                                                         }
                                                                     } else {
                                                                         JSONObject msgObj = jsonObject1.getJSONObject("msg");
                                                                         LoggerUtil.logI(TAG + from_id, "msgObj  230----->" + "----->" + msgObj + "----->" + from_id);
-                                                                        handleMessages(msgObj, from_id, null, key_word_reply, "",need_translate);
+                                                                        handleMessages(msgObj, from_id, null, key_word_reply, "", need_translate);
                                                                     }
                                                                     removeOneTalker(from_id);
                                                                 } catch (Exception e) {
@@ -666,7 +664,7 @@ public class HookMessage {
 
     }
 
-    public static void handleMessages(JSONObject msgObj, long talker_id, Long postTime, boolean key_word_reply, String key_id,boolean need_translate) throws JSONException {
+    public static void handleMessages(JSONObject msgObj, long talker_id, Long postTime, boolean key_word_reply, String key_id, boolean need_translate) throws JSONException {
         try {
             String msg_type = msgObj.getString("msg_type");
             int delay = msgObj.getInt("delay");
@@ -689,8 +687,12 @@ public class HookMessage {
                 if (need_translate) {
                     String lang = WriteFileUtil.read(Global.LANG_JUDGE + talker_id);
                     LoggerUtil.logI(TAG + talker_id, "content  691---->" + content + "---->" + delay + "---->" + lang);
-                    content = TranslateAction.post(talker_id + "", content, lang);
-                    content = content.replace("&#39;", "'");
+                    if (!TextUtils.isEmpty(lang)) {
+                        if (!lang.equals("error")) {
+                            content = TranslateAction.post(talker_id + "", content, lang);
+                            content = content.replace("&#39;", "'");
+                        }
+                    }
                 }
                 LoggerUtil.logI(TAG + talker_id, "content  695---->" + content + "---->" + delay);
 //                content = TranslateAction.post0(talker_id + "", content, false);
