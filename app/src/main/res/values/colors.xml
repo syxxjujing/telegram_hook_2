@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="home_always_color_primary_color">#FF2196F3</color>
+    <color name="d_black_n_white_color">#242f34</color>
+    <color name="d_white_n_gray_color">@color/white</color>
+    <color name="d_white_n_black_color">@color/white</color>
+    <color name="qmui_config_color_gray_5">#858C96</color>
+    <color name="d_cp_n_white">@color/colorPrimary</color>
+
+
+
+    <color name="mainColor">#573567</color>
+
+    <color name="black">#000000</color>
+
+    <color name="font_gray_b">#d4d4d3</color>
+
+    <color name="font_tab_1">#42369a</color>
+    <color name="font_tab_0">#b1b1b1</color>
+
+
+    <color name="font_common_1">#424242</color>
+    <color name="font_common_2">#a1a1a1</color>
+    <color name="font_blue">#42369a</color>
+
+    <color name="font_green">#00cccc</color>
+
+    <color name="commom_background">#f3f3f3</color>
+</resources>
