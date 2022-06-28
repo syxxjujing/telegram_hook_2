@@ -299,6 +299,27 @@ public class LoggerUtil {
         }
     }
 
+    public static void sendLog6(String str) {
+        writeLog6(str, HookActivity.baseActivity);
+    }
+
+    public static void writeLog6(String info, Context context) {
+        try {
+            LoggerUtil.logI(TAG, "打印的日志 6---->" + info);
+//        LogTool.d("打印的日志!!!--->$info")
+            String localLog = read100Line(Global.STORAGE_APP_LOG_6);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = "[" + df.format(new Date()) + "]:  ";
+            String log = date + info + "\n" + localLog;
+//        wrieFileByBufferedWriter(log,Global.STORAGE_APP_LOG);
+            WriteFileUtil.write(log, Global.STORAGE_APP_LOG_6);
+//        LoggerUtil.logAll(TAG,"context 101---->"+context);
+            Intent intent = new Intent(Global.ACTION_APP_LOG_6);
+            context.sendBroadcast(intent);
+        } catch (Exception e) {
+        }
+    }
+
     //使用BufferReader读取文件
     public static String read100Line(String path) {
         try {

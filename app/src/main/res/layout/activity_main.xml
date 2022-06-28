@@ -175,6 +175,11 @@
             android:layout_weight="1"
             android:text="查看发送情况" />
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_import_book"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="导入飞机通讯录" />
     <ListView
         android:id="@+id/lv_reply"
         android:layout_width="match_parent"

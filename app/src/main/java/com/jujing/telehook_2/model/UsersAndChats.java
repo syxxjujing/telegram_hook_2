@@ -15,6 +15,7 @@ import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.HookUtil;
 import com.jujing.telehook_2.util.LogTool;
 import com.jujing.telehook_2.util.LoggerUtil;
+import com.jujing.telehook_2.util.RandomUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
 
 import org.json.JSONArray;
@@ -221,19 +222,47 @@ public class UsersAndChats {
 
             LoggerUtil.logI(TAG, "联系人总共:" + contactsByPhone.size() + "人");
             int inerval_friends = 0;
+//            try {
+//                inerval_friends = Integer.parseInt(inerval_friends0);
+//            } catch (Exception e) {
+//
+//            }
+
             try {
-                inerval_friends = Integer.parseInt(inerval_friends0);
+                if (inerval_friends0.contains("-")) {
+                    String[] split = inerval_friends0.split("-");
+                    int start = Integer.parseInt(split[0]);
+                    int end = Integer.parseInt(split[1]);
+                    inerval_friends = RandomUtil.randomNumber(start, end);
+                } else {
+                    inerval_friends = Integer.parseInt(inerval_friends0);
+                }
             } catch (Exception e) {
 
             }
+
 
             int interval_messages = 0;
+//            try {
+//                interval_messages = Integer.parseInt(interval_messages0);
+//            } catch (Exception e) {
+//
+//            }
+
             try {
-                interval_messages = Integer.parseInt(interval_messages0);
+                if (interval_messages0.contains("-")) {
+                    String[] split = interval_messages0.split("-");
+                    int start = Integer.parseInt(split[0]);
+                    int end = Integer.parseInt(split[1]);
+                    interval_messages = RandomUtil.randomNumber(start, end);
+                } else {
+                    interval_messages = Integer.parseInt(interval_messages0);
+                }
             } catch (Exception e) {
 
             }
-            LoggerUtil.logI(TAG, "inerval_friends 102 :" + inerval_friends + "-----" + interval_messages);
+
+            LoggerUtil.logI(TAG, "inerval_friends 265 :" + inerval_friends + "-----" + interval_messages);
             for (int i = 0; i < contactsByPhone.size(); i++) {
                 long user_id = XposedHelpers.getLongField(contactsByPhone.get(i), "user_id");
                 Object user = UsersAndChats.getUser(user_id);

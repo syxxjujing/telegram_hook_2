@@ -61,6 +61,7 @@
         <activity android:name=".GroupAddAndInviteActivity" />
         <activity android:name=".GroupListActivity" />
         <activity android:name=".GroupAddMemberActivity" />
+        <activity android:name=".ImportBookActivity" />
     </application>
 
 </manifest>

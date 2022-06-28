@@ -27,6 +27,7 @@ import com.jujing.telehook_2.model.operate.BanLoginAction;
 import com.jujing.telehook_2.model.operate.GetChannelParticipants;
 import com.jujing.telehook_2.model.operate.GroupAddMemberAction;
 import com.jujing.telehook_2.model.operate.GroupInfoAction;
+import com.jujing.telehook_2.model.operate.ImportContactsAction;
 import com.jujing.telehook_2.model.operate.JoinToGroupAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
 import com.jujing.telehook_2.model.operate.LoadFullUserAction;
@@ -163,6 +164,7 @@ public class HookMain implements IXposedHookLoadPackage {
         intentFilter.addAction(HookMain.ACTION_XTELE_GROUP_STOP);
         intentFilter.addAction(HookMain.ACTION_XTELE_GROUP_CREATE);
         intentFilter.addAction(HookMain.ACTION_XTELE_GROUP_ADD_MEMBER);
+        intentFilter.addAction(HookMain.ACTION_XTELE_IMPORT_BOOK);
         MyReceiver myReceiver = new MyReceiver();
         context.registerReceiver(myReceiver, intentFilter);
         ExecutorUtil.doExecute(new Runnable() {
@@ -274,12 +276,19 @@ public class HookMain implements IXposedHookLoadPackage {
     public static final String ACTION_XTELE_GROUP_STOP = "ACTION_XTELE_GROUP_STOP";
     public static final String ACTION_XTELE_GROUP_CREATE = "ACTION_XTELE_GROUP_CREATE";
     public static final String ACTION_XTELE_GROUP_ADD_MEMBER = "ACTION_XTELE_GROUP_ADD_MEMBER";
+    public static final String ACTION_XTELE_IMPORT_BOOK = "ACTION_XTELE_IMPORT_BOOK";
 
     class MyReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, final Intent intent) {
             LoggerUtil.logI(TAG, "intent  94--->" + intent.getAction());
+            if (intent.getAction().equals(ACTION_XTELE_IMPORT_BOOK)) {
+                String path = intent.getStringExtra("path");
+                LoggerUtil.logI(TAG, "path  288----------" + path);
+                ImportContactsAction.handle(path);
+            }
+
             if (intent.getAction().equals(ACTION_XTELE_GROUP_ADD_MEMBER)) {
                 GroupAddMemberAction.handle();
 

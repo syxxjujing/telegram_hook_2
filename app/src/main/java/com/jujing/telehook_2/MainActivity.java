@@ -131,6 +131,15 @@ public class MainActivity extends AppCompatActivity {
         String read2 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
         et_content.setText(read2);
 
+        Button btn_import_book = findViewById(R.id.btn_import_book);
+        btn_import_book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ImportBookActivity.class));
+
+            }
+        });
+
 //        ExecutorUtil.doExecute(new Runnable() {
 //            @Override
 //            public void run() {

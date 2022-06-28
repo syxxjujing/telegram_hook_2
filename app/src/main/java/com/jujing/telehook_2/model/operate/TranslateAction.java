@@ -176,6 +176,14 @@ public class TranslateAction {
                 return "error";
             }
         }
+        if (c.contains("hai")){
+            LoggerUtil.logI(TAG + talker_id, "c 180: " + c);
+            String c1 = c.replace(".", "");
+            if (c1.equals("hai")){
+                WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
+                return "error";
+            }
+        }
 
         final String[] result2 = {""};
         try {

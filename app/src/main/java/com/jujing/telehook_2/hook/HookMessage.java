@@ -10,6 +10,7 @@ import com.jujing.telehook_2.HttpApi;
 import com.jujing.telehook_2.model.SendMessage;
 import com.jujing.telehook_2.model.UsersAndChats;
 import com.jujing.telehook_2.model.operate.GroupAddMemberAction;
+import com.jujing.telehook_2.model.operate.ImportContactsAction;
 import com.jujing.telehook_2.model.operate.JoinToGroupAction;
 import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
@@ -395,12 +396,13 @@ public class HookMessage {
                                 LoggerUtil.logI(TAG + from_id, "user_info_phone 185----->" + user_info_phone);
                                 jsonObjectCurrent.put("phone_number", user_info_phone);
                                 LoggerUtil.logI(TAG + from_id, "msg_type 178----->" + msg_type);
+                                boolean isCountry = false;
                                 if (!msg_type.equals("text")) {
                                     String country = WriteFileUtil.read(Global.COUNTRY_JUDGE + from_id);
                                     LoggerUtil.logI(TAG + from_id, "country 395----->" + country);
                                     String lang = WriteFileUtil.read(Global.LANG_JUDGE + from_id);
                                     LoggerUtil.logI(TAG + from_id, "lang 397----->" + lang);
-                                    boolean isCountry = false;
+
                                     if (!TextUtils.isEmpty(country)) {
                                         if (!country.equals("fail")) {
                                             isCountry = true;
@@ -433,10 +435,12 @@ public class HookMessage {
 
                                         //                            SendMessage.seachUsers("@MT667788");
 
-                                        SearchContactAction searchContactAction = new SearchContactAction();
-                                        searchContactAction.seachUsers("@Giftkeys2");
+//                                        SearchContactAction searchContactAction = new SearchContactAction();
+//                                        searchContactAction.seachUsers("+639565471115");
+
+//                                        ImportContactsAction.importContact("+63 916 517 1456");
                                     }
-                                    boolean isCountry = false;
+//                                    boolean isCountry = false;
                                     String country = JudgeCountryAndLangAction.judgeCountry(from_id, message.toString());
                                     LoggerUtil.logI(TAG + from_id, "country 441----->" + country + "---->" + message);
                                     if (!country.equals("fail")) {
@@ -479,6 +483,7 @@ public class HookMessage {
                                 LoggerUtil.logI(TAG + from_id, "jsonObject  217--->" + jsonObject0.toString() + "---->" + token_);
                                 String json = Aes.buildReqStr(Aes.Jia_Mi(jsonObject0.toString()));
                                 LoggerUtil.logAll(TAG + from_id, "json  219 : " + json);
+                                boolean finalIsCountry = isCountry;
                                 OkGo.post(HttpApi.ReplyMsg)
                                         .headers("Authorization", token_)
                                         .upJson(json)
@@ -493,6 +498,14 @@ public class HookMessage {
                                                     }
                                                     final JSONObject jsonObject = new JSONObject(s);
                                                     String ret = jsonObject.getString("ret");
+                                                    if (ret.equals("failed")) {
+                                                        String msg = jsonObject.getString("msg");
+                                                        if (msg.contains("没有对应")) {//没有识别出国家，但脚本走完的情况
+
+                                                            LoggerUtil.logI(TAG + from_id, "isCountry 505: " + finalIsCountry);
+                                                            WriteFileUtil.write("default", Global.COUNTRY_JUDGE + from_id);
+                                                        }
+                                                    }
                                                     if (ret.equals("success")) {
                                                         ExecutorUtil.doExecute(new Runnable() {
                                                             @Override

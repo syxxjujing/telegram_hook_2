@@ -3,7 +3,7 @@ package com.jujing.telehook_2;
 import android.os.Environment;
 
 public class Global {
-    public static final String XPOSED_CODE = "111";//TODO 测试  记得改isDebug！！！
+    public static final String XPOSED_CODE = "114";//TODO 测试  记得改isDebug！！！
     public static boolean IS_USE = false;//TODO 测试  false 是 nkt  记得改appName   nkt是疯狂
     public static boolean IS_DEBUG = false;//TODO 测试
     public static boolean IS_DEBUG_STNLOGIC = false;//TODO 测试
@@ -21,11 +21,13 @@ public class Global {
     public static final String  ACTION_APP_LOG_3 = "action_app_log_tele_3";
     public static final String  ACTION_APP_LOG_4 = "action_app_log_tele_4";
     public static final String  ACTION_APP_LOG_5 = "action_app_log_tele_5";
+    public static final String  ACTION_APP_LOG_6 = "action_app_log_tele_6";
     public static final String STORAGE_APP_LOG = storage + "/storage_app_log";//
     public static final String STORAGE_APP_LOG_2 = storage + "/storage_app_log_2";//
     public static final String STORAGE_APP_LOG_3 = storage + "/storage_app_log_3";//
     public static final String STORAGE_APP_LOG_4 = storage + "/storage_app_log_4";//
     public static final String STORAGE_APP_LOG_5 = storage + "/storage_app_log_5";//
+    public static final String STORAGE_APP_LOG_6 = storage + "/storage_app_log_6";//
     public static final String STORAGE_KEY= storage + "/key";//
     public static final String BAN_LOGIN = storage + "/ban_login";
 
