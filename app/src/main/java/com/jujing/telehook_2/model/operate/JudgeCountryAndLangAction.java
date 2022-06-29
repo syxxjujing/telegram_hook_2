@@ -46,7 +46,7 @@ public class JudgeCountryAndLangAction {
                     "    \"area_code\": \"00376\",\n" +
                     "    \"country_id\": 5,\n" +
                     "    \"forbid\": false,\n" +
-                    "    \"name_cn\": \"安道尔共和国\",\n" +
+                    "    \"name_cn\": \"安道尔\",\n" +
                     "    \"name_en\": \"Andorra\"\n" +
                     "  },\n" +
                     "  {\n" +
@@ -298,7 +298,7 @@ public class JudgeCountryAndLangAction {
                     "    \"area_code\": \"00236\",\n" +
                     "    \"country_id\": 34,\n" +
                     "    \"forbid\": true,\n" +
-                    "    \"name_cn\": \"中非共和国\",\n" +
+                    "    \"name_cn\": \"中非\",\n" +
                     "    \"name_en\": \"Central African Republic\"\n" +
                     "  },\n" +
                     "  {\n" +
@@ -417,7 +417,7 @@ public class JudgeCountryAndLangAction {
                     "    \"area_code\": \"001809\",\n" +
                     "    \"country_id\": 47,\n" +
                     "    \"forbid\": false,\n" +
-                    "    \"name_cn\": \"多米尼加共和国\",\n" +
+                    "    \"name_cn\": \"多米尼加\",\n" +
                     "    \"name_en\": \"Dominican Republic\"\n" +
                     "  },\n" +
                     "  {\n" +
@@ -452,7 +452,7 @@ public class JudgeCountryAndLangAction {
                     "    \"area_code\": \"009714\",\n" +
                     "    \"country_id\": 230,\n" +
                     "    \"forbid\": false,\n" +
-                    "    \"name_cn\": \"迪拜酋长国\",\n" +
+                    "    \"name_cn\": \"迪拜\",\n" +
                     "    \"name_en\": \"Emirate of Dubai\"\n" +
                     "  },\n" +
                     "  {\n" +

@@ -284,7 +284,14 @@ public class HookMain implements IXposedHookLoadPackage {
 
         @Override
         public void onReceive(Context context, final Intent intent) {
-            LoggerUtil.logI(TAG, "intent  94--->" + intent.getAction());
+            try {
+                if (!intent.getAction().equals(ACTION_XTELE_COLLECT)) {
+                    LoggerUtil.logI(TAG, "intent  94--->" + intent.getAction());
+                }
+            } catch (Exception e) {
+
+            }
+
             if (intent.getAction().equals(ACTION_XTELE_IMPORT_BOOK)) {
                 String path = intent.getStringExtra("path");
                 LoggerUtil.logI(TAG, "path  288----------" + path);

@@ -657,10 +657,10 @@ public class MainActivity extends AppCompatActivity {
             tv_notice.setTextColor(Color.RED);
         }
 
-//        Intent intent = new Intent();
-//        intent.putExtra("path", "check_result");
-//        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
-//        sendBroadcast(intent);
+        Intent intent = new Intent();
+        intent.putExtra("path", "check_result");
+        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
+        sendBroadcast(intent);
 
 
     }

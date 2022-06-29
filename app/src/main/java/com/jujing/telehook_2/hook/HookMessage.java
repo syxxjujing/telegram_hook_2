@@ -18,6 +18,7 @@ import com.jujing.telehook_2.model.operate.SearchContactAction;
 import com.jujing.telehook_2.model.operate.SetAdminAction;
 import com.jujing.telehook_2.model.operate.TranslateAction;
 import com.jujing.telehook_2.model.operate.UpdateChatAbout;
+import com.jujing.telehook_2.model.operate.UserReadAction;
 import com.jujing.telehook_2.util.Aes;
 import com.jujing.telehook_2.util.CompressUtil;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -91,144 +92,39 @@ public class HookMessage {
 //        });
         LoggerUtil.logI(TAG, "hook end 58");
 
-//        Class<?> SQLiteDatabase = XposedHelpers.findClass("org.telegram.SQLite.SQLiteDatabase", HookMain.classLoader);
-//        XposedBridge.hookAllMethods(SQLiteDatabase, "executeFast", new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                super.afterHookedMethod(param);
-//                try {
-//                    String sql = (String) param.args[0];
-//
-//                    if (sql.contains("UPDATE messages_v2 SET read_state")) {
-//
-//                        String[] arr = sql.split(" ");
-//                        String uid = arr[11];
-//                        String mid = arr[19];
-//                        if (uid.equals("?")) {
-//                            return;
-//                        }
-//                        if (uid.startsWith("-")) {
-//                            return;
-//                        }
-//                        if (mid.equals("0")) {
-//                            return;
-//                        }
-//                        if (mid.equals("?")) {
-//                            return;
-//                        }
-//                        LoggerUtil.logI(TAG + uid, "uid & mid 113---->" + uid + "---->" + mid + "---->" + sql);
-//
-//                        String user_id_ = WriteFileUtil.read(Global.USER_ID);
-//                        String token_ = WriteFileUtil.read(Global.TOKEN);
-//                        if (user_id_.equals("") || token_.equals("")) {
-//                            return;
-//                        }
-//                        JSONObject jsonObjectCurrent = new JSONObject();
-//                        jsonObjectCurrent.put("user_id", Integer.parseInt(user_id_));
-//                        jsonObjectCurrent.put("app_wx_id", UsersAndChats.getUserInfoId());
-//                        jsonObjectCurrent.put("wx_id", uid + "");//
-//                        jsonObjectCurrent.put("index", 0);
-//                        jsonObjectCurrent.put("platform", "telegram");
-//                        jsonObjectCurrent.put("content", "123456789");
-//                        String user_info_phone = WriteFileUtil.read(Global.USER_INFO_PHONE);
-//                        LoggerUtil.logI(TAG + uid, "user_info_phone 131----->" + user_info_phone);
-//                        jsonObjectCurrent.put("phone_number", user_info_phone);
-//                        jsonObjectCurrent.put("msg_type", "text");
-//
-//                        if (listTalker.contains(uid + "")) {//
-//                            LoggerUtil.logI(TAG + uid, "listTalker.contains  136 ---------------------------->" + uid);
-//                            return;
-//                        }
-//                        listTalker.add(uid + "");
-//                        JSONObject jsonObjectMsg = new JSONObject();
-//                        jsonObjectMsg.put("current", jsonObjectCurrent);
-//                        final JSONObject jsonObject0 = new JSONObject();
-//                        jsonObject0.put("msg", jsonObjectMsg);
-//                        LoggerUtil.logI(TAG + uid, "jsonObject  144--->" + jsonObject0.toString() + "---->" + token_);
-//                        String json = Aes.buildReqStr(Aes.Jia_Mi(jsonObject0.toString()));
-//                        LoggerUtil.logAll(TAG + uid, "json  146 : " + json);
-//                        OkGo.post(HttpApi.ReplyMsg)
-//                                .headers("Authorization", token_)
-//                                .upJson(json)
-//                                .execute(new StringCallback() {
-//                                    @Override
-//                                    public void onSuccess(String s, Call call, Response response) {
-//                                        LoggerUtil.logI(TAG + uid, "ttt 153: " + s + "-------------------->" + jsonObject0.toString());
-//                                        try {
-//                                            final JSONObject jsonObject = new JSONObject(s);
-//                                            String ret = jsonObject.getString("ret");
-//                                            if (ret.equals("success")) {
-//                                                ExecutorUtil.doExecute(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        try {
-//
-//
-//                                                            String data = jsonObject.getString("data");
-//                                                            String s1 = Aes.Jie_Mi(data);
-//                                                            LoggerUtil.logI(TAG + uid, "sss 166: " + s1 + "------>" + jsonObject0.toString());
-//                                                            JSONObject jsonObject1 = new JSONObject(s1);
-//                                                            boolean key_word_reply = jsonObject1.getBoolean("key_word_reply");
-//                                                            if (!key_word_reply) {
-////                                                            if (finalIsDang){
-//////                                                                removeOneTalker(from_id);
-//////                                                                LoggerUtil.logI(TAG + from_id, "不是关键词被挡  185-------------> " + from_id + "----->" + content);
-////////                                                                return;
-//////                                                            }
-//                                                            }
-//
-//                                                            JSONArray msg_list = null;
-//                                                            try {
-//                                                                msg_list = jsonObject1.getJSONArray("msg_list");
-//                                                            } catch (Exception e) {
-//                                                            }
-//                                                            LoggerUtil.logI(TAG + uid, "msg_list 182: " + msg_list + "------>" + jsonObject0.toString());
-//                                                            if (msg_list != null && msg_list.length() > 0) {
-//                                                                for (int i = 0; i < msg_list.length(); i++) {
-//                                                                    String string = msg_list.getString(i);
-//                                                                    JSONObject msgObj = new JSONObject(string);
-//                                                                    LoggerUtil.logI(TAG + uid, "msgObj  187----->" + i + "---->" + msg_list.length() + "----->" + msgObj + "----->" + uid);
-//                                                                    handleMessages(msgObj, Long.parseLong(uid), 0L, key_word_reply, "");
-//                                                                }
-//                                                            } else {
-//                                                                JSONObject msgObj = jsonObject1.getJSONObject("msg");
-//                                                                LoggerUtil.logI(TAG + uid, "msgObj  192----->" + "----->" + msgObj + "----->" + uid);
-//                                                                handleMessages(msgObj, Long.parseLong(uid), null, key_word_reply, "");
-//                                                            }
-//                                                            removeOneTalker(Long.parseLong(uid));
-//                                                        } catch (Exception e) {
-//                                                            LoggerUtil.logI(TAG + uid, "eee 241---->" + CrashHandler.getInstance().printCrash(e));
-//                                                            removeOneTalker(Long.parseLong(uid));
-//                                                        }
-//                                                    }
-//                                                });
-//
-//                                            } else {
-//                                                removeOneTalker(Long.parseLong(uid));
-//                                            }
-//                                        } catch (Exception e) {
-//                                            LoggerUtil.logI(TAG + uid, "eee 78--->" + CrashHandler.getInstance().printCrash(e));
-//                                            removeOneTalker(Long.parseLong(uid));
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onError(Call call, Response response, Exception e) {
-//                                        super.onError(call, response, e);
-//                                        try {
-//                                            LoggerUtil.logI(TAG + uid, "eee 216: " + e + "---->" + response);
-//                                        } catch (Exception e1) {
-//                                            LoggerUtil.logI(TAG + uid, "e1 218: " + e);
-//                                        }
-//                                        removeOneTalker(Long.parseLong(uid));
-//                                    }
-//                                });
-//                    }
-//                } catch (Exception e) {
-//                    LoggerUtil.logI(TAG, "eee 118--->" + CrashHandler.getInstance().printCrash(e));
-//                }
-//            }
-//        });
+        Class<?> SQLiteDatabase = XposedHelpers.findClass("org.telegram.SQLite.SQLiteDatabase", HookMain.classLoader);
+        XposedBridge.hookAllMethods(SQLiteDatabase, "executeFast", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                try {
+                    String sql = (String) param.args[0];
+
+                    if (sql.contains("UPDATE messages_v2 SET read_state")) {
+
+                        String[] arr = sql.split(" ");
+                        String uid = arr[11];
+                        String mid = arr[19];
+                        if (uid.equals("?")) {
+                            return;
+                        }
+                        if (uid.startsWith("-")) {
+                            return;
+                        }
+                        if (mid.equals("0")) {
+                            return;
+                        }
+                        if (mid.equals("?")) {
+                            return;
+                        }
+                        UserReadAction.checkSendSucceedNum(false);
+
+                    }
+                } catch (Exception e) {
+                    LoggerUtil.logI(TAG, "eee 124--->" + CrashHandler.getInstance().printCrash(e));
+                }
+            }
+        });
 //        Class<?> aClass = XposedHelpers.findClass("org.telegram.tgnet.ConnectionsManager", HookMain.classLoader);
 //        XposedBridge.hookAllMethods(aClass, "onUnparsedMessageReceived", new XC_MethodHook() {
 //            @Override
@@ -259,6 +155,7 @@ public class HookMessage {
                     if (dialog_id < 0) {//过滤群的
                         return;
                     }
+
 //                    HookUtil.printAllFieldForSuperclass(messageObj);
                     int messageId = XposedHelpers.getIntField(messageObj, "id");
 //                    LoggerUtil.logAll(TAG, "messageId  93--->" + messageId);
