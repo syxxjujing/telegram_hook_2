@@ -229,13 +229,28 @@ public class HookMessage {
 //                }
 //            }
 //        });
+//        Class<?> aClass = XposedHelpers.findClass("org.telegram.tgnet.ConnectionsManager", HookMain.classLoader);
+//        XposedBridge.hookAllMethods(aClass, "onUnparsedMessageReceived", new XC_MethodHook() {
+//            @Override
+//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                super.afterHookedMethod(param);
+//                String s = HookUtil.printParams(param);
+//                LoggerUtil.logI("onUnparsedMessageReceived","sss  238------>"+s);
+//            }
+//        });
 
         Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", HookMain.classLoader);
-        XposedBridge.hookAllMethods(MessagesStorage, "putMessagesInternal", new XC_MethodHook() {
+//        XposedBridge.hookAllMethods(MessagesStorage, "putMessagesInternal", new XC_MethodHook() {
+        XposedBridge.hookAllMethods(MessagesStorage, "putMessages", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 try {
+//                    LoggerUtil.logI(TAG,"param.args.length  249---->"+param.args.length);
+                    if (param.args.length != 7) {
+                        return;
+                    }
+
                     List list = (List) param.args[0];
 //                    LoggerUtil.logI(TAG, "list.size  74----->" + list.size());
 //                    for (int i = 0; i < list.size(); i++) {
@@ -258,7 +273,7 @@ public class HookMessage {
                         return;
                     }
                     listMessageIds.add(messageId);
-                    LoggerUtil.logI(TAG, "dialog_id  260------>" + dialog_id);
+                    LoggerUtil.logI(TAG, "dialog_id  261------>" + dialog_id + "--->" + list.size());
                     ExecutorUtil.doExecute(new Runnable() {
                         @Override
                         public void run() {
@@ -460,6 +475,18 @@ public class HookMessage {
 
                                     String result = TranslateAction.post(from_id + "", message.toString(), "zh");
                                     LoggerUtil.logI(TAG + from_id, "result 419--->" + result + "----->" + message.toString());
+                                    if (!isCountry) {
+                                        for (int i = 0; i < JudgeCountryAndLangAction.countryList.size(); i++) {
+                                            String s = JudgeCountryAndLangAction.countryList.get(i);
+                                            if (result.contains(s)) {//包含国家
+                                                LoggerUtil.logI(TAG + from_id, "包含国家 467---->" + s + "---->" + result + "---->" + message.toString());
+                                                WriteFileUtil.write("default", Global.COUNTRY_JUDGE + from_id);
+                                                return;
+                                            }
+                                        }
+                                    }
+
+
                                     jsonObjectCurrent.put("content", result);
                                 } else if (msg_type.equals("image")) {//图片
                                     jsonObjectCurrent.put("msg_type", "image");
@@ -480,10 +507,10 @@ public class HookMessage {
                                 jsonObjectMsg.put("current", jsonObjectCurrent);
                                 final JSONObject jsonObject0 = new JSONObject();
                                 jsonObject0.put("msg", jsonObjectMsg);
-                                LoggerUtil.logI(TAG + from_id, "jsonObject  217--->" + jsonObject0.toString() + "---->" + token_);
+                                LoggerUtil.logI(TAG + from_id, "jsonObject  497--->" + jsonObject0.toString() + "---->" + token_);
                                 String json = Aes.buildReqStr(Aes.Jia_Mi(jsonObject0.toString()));
                                 LoggerUtil.logAll(TAG + from_id, "json  219 : " + json);
-                                boolean finalIsCountry = isCountry;
+//                                boolean finalIsCountry = isCountry;
                                 OkGo.post(HttpApi.ReplyMsg)
                                         .headers("Authorization", token_)
                                         .upJson(json)
@@ -498,14 +525,17 @@ public class HookMessage {
                                                     }
                                                     final JSONObject jsonObject = new JSONObject(s);
                                                     String ret = jsonObject.getString("ret");
-                                                    if (ret.equals("failed")) {
-                                                        String msg = jsonObject.getString("msg");
-                                                        if (msg.contains("没有对应")) {//没有识别出国家，但脚本走完的情况
-
-                                                            LoggerUtil.logI(TAG + from_id, "isCountry 505: " + finalIsCountry);
-                                                            WriteFileUtil.write("default", Global.COUNTRY_JUDGE + from_id);
-                                                        }
-                                                    }
+//                                                    if (ret.equals("failed")) {
+//                                                        String msg = jsonObject.getString("msg");
+//                                                        if (msg.contains("没有对应")) {//没有识别出国家，但脚本走完的情况
+//
+//                                                            LoggerUtil.logI(TAG + from_id, "isCountry 505: " + finalIsCountry);
+//                                                            if (!finalIsCountry) {
+//                                                                WriteFileUtil.write("default", Global.COUNTRY_JUDGE + from_id);
+//                                                            }
+//
+//                                                        }
+//                                                    }
                                                     if (ret.equals("success")) {
                                                         ExecutorUtil.doExecute(new Runnable() {
                                                             @Override
@@ -588,7 +618,7 @@ public class HookMessage {
                         }
                     });
                 } catch (Exception e) {
-
+                    LoggerUtil.logI(TAG, "eee 590--->" + CrashHandler.getInstance().printCrash(e));
                 }
 
 
@@ -601,17 +631,17 @@ public class HookMessage {
         });
 
 
-        Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", HookMain.classLoader);
-        XposedBridge.hookAllMethods(aClass, "sendMessage", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                String s = HookUtil.printParams(param);
+//        Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", HookMain.classLoader);
+//        XposedBridge.hookAllMethods(aClass, "sendMessage", new XC_MethodHook() {
+//            @Override
+//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                super.afterHookedMethod(param);
+//                String s = HookUtil.printParams(param);
 //                sss  54--->vvv,746055308,null,null,true,null,null,null,
 
 //                sss  54--->org.telegram.tgnet.TLRPC$TL_photo@f102266,null,746055308,null,null,null,null,{groupId=0, originalPath=/storage/emulated/0/11Siri/bgBottomBitmap.png30971_1561946476000, final=1},0,null,
 
-                //群 文字
+        //群 文字
 //                sss  54--->😍,-334129000,null,null,true,null,null,null,
 
 //                LoggerUtil.logI(TAG,"sss  116--->" + s);
@@ -625,8 +655,8 @@ public class HookMessage {
 //                HookUtil.frames();
 
 
-            }
-        });
+//            }
+//        });
 //        if (true) {
 //            return;
 //        }

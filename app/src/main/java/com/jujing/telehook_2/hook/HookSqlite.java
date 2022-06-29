@@ -5,12 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 import com.jujing.telehook_2.HookMain;
 import com.jujing.telehook_2.util.HookUtil;
 import com.jujing.telehook_2.util.LogTool;
+import com.jujing.telehook_2.util.LoggerUtil;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 public class HookSqlite {
+    private static final String TAG = "HookSqlite";
     public  static Object database = null;
     public static void hook(){
         Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", HookMain.classLoader);
@@ -55,15 +57,15 @@ public class HookSqlite {
 //
 //
 //
-//        XposedBridge.hookAllMethods(SQLiteDatabase.class, "insertWithOnConflict", new XC_MethodHook() {
-//            @Override
-//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-//                super.afterHookedMethod(param);
-//                String s = HookUtil.printParams(param);
-//                LogTool.e("sss  19---->"+s);
-//
-//
-//            }
-//        });
+        XposedBridge.hookAllMethods(aClass, "insertWithOnConflict", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                String s = HookUtil.printParams(param);
+                LoggerUtil.logAll(TAG, "sss  158---->" + s);
+
+
+            }
+        });
     }
 }

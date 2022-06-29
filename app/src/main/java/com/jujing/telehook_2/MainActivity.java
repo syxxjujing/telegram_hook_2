@@ -572,23 +572,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.putExtra("path", "check_result");
-                        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
-                        sendBroadcast(intent);
-
-                    } catch (Exception e) {
-
-                    }
-                    SystemClock.sleep(1000 * 30);
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        Intent intent = new Intent();
+//                        intent.putExtra("path", "check_result");
+//                        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
+//                        sendBroadcast(intent);
+//
+//                    } catch (Exception e) {
+//
+//                    }
+//                    SystemClock.sleep(1000 * 30);
+//                }
+//            }
+//        }).start();
 
 
     }
@@ -657,10 +657,10 @@ public class MainActivity extends AppCompatActivity {
             tv_notice.setTextColor(Color.RED);
         }
 
-        Intent intent = new Intent();
-        intent.putExtra("path", "check_result");
-        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
-        sendBroadcast(intent);
+//        Intent intent = new Intent();
+//        intent.putExtra("path", "check_result");
+//        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
+//        sendBroadcast(intent);
 
 
     }
@@ -843,17 +843,17 @@ public class MainActivity extends AppCompatActivity {
             tv = (TextView) toucherLayout.findViewById(R.id.tv);
 
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    //                while (true) {
-                    //                    tv.setText("添加人数:"+AddText.INSTANCE.getVirtualCount());
-                    //                handler.sendEmptyMessage(1);
-                    //                    SystemClock.sleep(3000);
-                    //                }
-                    //
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    //                while (true) {
+//                    //                    tv.setText("添加人数:"+AddText.INSTANCE.getVirtualCount());
+//                    //                handler.sendEmptyMessage(1);
+//                    //                    SystemClock.sleep(3000);
+//                    //                }
+//                    //
+//                }
+//            }).start();
 
 
             tv.setOnClickListener(new View.OnClickListener() {

@@ -29,6 +29,7 @@ import com.jujing.telehook_2.model.operate.GroupAddMemberAction;
 import com.jujing.telehook_2.model.operate.GroupInfoAction;
 import com.jujing.telehook_2.model.operate.ImportContactsAction;
 import com.jujing.telehook_2.model.operate.JoinToGroupAction;
+import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
 import com.jujing.telehook_2.model.operate.LoadFullUserAction;
 import com.jujing.telehook_2.model.operate.SearchContactAction;
@@ -171,6 +172,7 @@ public class HookMain implements IXposedHookLoadPackage {
             @Override
             public void run() {
                 try {
+                    JudgeCountryAndLangAction.initCountry();
                     for (int i = 0; i < 50; i++) {
                         Object currentUser = UsersAndChats.getCurrentUser();
                         LoggerUtil.logI(TAG, "currentUser   113=============>" + i + "-----------------" + currentUser);
