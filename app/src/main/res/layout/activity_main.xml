@@ -175,11 +175,26 @@
             android:layout_weight="1"
             android:text="查看发送情况" />
     </LinearLayout>
-    <Button
-        android:id="@+id/btn_import_book"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="导入飞机通讯录" />
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_import_book"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="导入飞机通讯录"/>
+
+
+        <Button
+            android:id="@+id/btn_clear_read"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="清零弹窗数据" />
+    </LinearLayout>
     <ListView
         android:id="@+id/lv_reply"
         android:layout_width="match_parent"

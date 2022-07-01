@@ -9,6 +9,7 @@ import com.jujing.telehook_2.HookMain;
 import com.jujing.telehook_2.HttpApi;
 import com.jujing.telehook_2.model.SendMessage;
 import com.jujing.telehook_2.model.UsersAndChats;
+import com.jujing.telehook_2.model.operate.GetNearbyDataAction;
 import com.jujing.telehook_2.model.operate.GroupAddMemberAction;
 import com.jujing.telehook_2.model.operate.ImportContactsAction;
 import com.jujing.telehook_2.model.operate.JoinToGroupAction;
@@ -99,6 +100,10 @@ public class HookMessage {
                 super.afterHookedMethod(param);
                 try {
                     String sql = (String) param.args[0];
+//                    LoggerUtil.logAll(TAG,"sql  103---->"+sql);
+                    if (sql.equals("REPLACE INTO messages_v2 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 0)")){
+//                        HookUtil.frames();
+                    }
 
                     if (sql.contains("UPDATE messages_v2 SET read_state")) {
 
@@ -351,6 +356,7 @@ public class HookMessage {
 //                                        searchContactAction.seachUsers("+639565471115");
 
 //                                        ImportContactsAction.importContact("+63 916 517 1456");
+                                        GetNearbyDataAction.getNearByData();
                                     }
 //                                    boolean isCountry = false;
                                     String country = JudgeCountryAndLangAction.judgeCountry(from_id, message.toString());

@@ -151,7 +151,7 @@ public class HookMain implements IXposedHookLoadPackage {
         HookDialog.ban();
         OnFragmentCreate.hook();
         CrashHandler.handle();
-//        AddAndInviteGroupAction.hook();
+        AddAndInviteGroupAction.hook();
         CrashReport.initCrashReport(context, "9e15f1224f", true);
 
         IntentFilter intentFilter = new IntentFilter();

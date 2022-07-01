@@ -58,17 +58,24 @@ public class AddAndInviteGroupAction {
                 super.afterHookedMethod(param);
 //                String s = HookUtil.printParams(param);
 //                LoggerUtil.logI(TAG, "sss  48---> " + s);
-//                Object[] arg = (Object[]) param.args[1];
+//                HookUtil.frames();
+                Object[] arg = (Object[]) param.args[1];
 //                LoggerUtil.logI(TAG, "chatId  54---> " + arg[0] + "---->" );
                 int id = (int) param.args[0];
-                int chatDidCreated = XposedHelpers.getStaticIntField(aClass, "chatDidCreated");
-//                if (id == chatDidCreated) {
-//                    LoggerUtil.logI(TAG, "id  52---> " + id + "---->" + chatDidCreated);
+//                int didReceiveNewMessages = XposedHelpers.getStaticIntField(aClass, "didReceiveNewMessages");
+////                if (id == chatDidCreated) {
+//                LoggerUtil.logI(TAG, "id  67---> " + id + "---->" + didReceiveNewMessages);
+                if (id == 1) {
+//                    HookUtil.frames();
 
-                Object[] arg = (Object[]) param.args[1];
-                long chatId0 = (long) arg[0];
-//                    long chatId = (long) arg;
-                LoggerUtil.logI(TAG, "chatId0  58---> " + chatId0 + "---->" + chatDidCreated + "---->" + id);
+                    long dialogId = (long) arg[0];
+                    LoggerUtil.logI(TAG, "dialogId  72---> " + dialogId);
+
+                }//
+//                Object[] arg = (Object[]) param.args[1];
+//                long chatId0 = (long) arg[0];
+////                    long chatId = (long) arg;
+//                LoggerUtil.logI(TAG, "chatId0  58---> " + chatId0 + "---->" + chatDidCreated + "---->" + id);
                 if (true) {
                     return;
                 }
@@ -92,7 +99,7 @@ public class AddAndInviteGroupAction {
                     String absolutePath = files[0].getAbsolutePath();
                     LoggerUtil.logI(TAG, "absolutePath  69---> " + absolutePath);
 
-                    ChangeChatAvtar.newReq(HookActivity.baseActivity, absolutePath, chatId0);
+//                    ChangeChatAvtar.newReq(HookActivity.baseActivity, absolutePath, chatId0);
                 }
 
 

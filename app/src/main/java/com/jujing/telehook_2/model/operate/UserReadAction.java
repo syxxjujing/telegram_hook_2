@@ -387,7 +387,7 @@ public class UserReadAction {
 
 
         } catch (Exception e) {
-
+            LoggerUtil.logI(TAG, "eee  390----》" + CrashHandler.getInstance().printCrash(e));
         }
     }
 

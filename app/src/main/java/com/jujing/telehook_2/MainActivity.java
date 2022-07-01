@@ -41,6 +41,7 @@ import com.jujing.telehook_2.bean.LocalReplyBean;
 import com.jujing.telehook_2.model.operate.Mp3ToOggAction;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.ExecutorUtil;
+import com.jujing.telehook_2.util.FileUtils;
 import com.jujing.telehook_2.util.JsonTool;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.MatchUtil;
@@ -361,6 +362,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, ShowLogActivity.class));
+            }
+        });
+
+        Button btn_clear_read = findViewById(R.id.btn_clear_read);
+        btn_clear_read.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WriteFileUtil.write("", Global.MESSAGE_SUCCESS_NUM);
+                WriteFileUtil.write("", Global.MESSAGE_READ_NUM);
+
+
+                LoggerUtil.logI(TAG, "btn_clear_read   372--->");
+                boolean b = FileUtils.deleteDir(Global.SENT_UID);
+//                boolean b = FileUtils.deleteDir("/sdcard/1combine_reply/file3/");
+                LoggerUtil.logI(TAG, "bbb   374--->" + b);
+                Intent intent = new Intent();
+                intent.putExtra("path", "check_result");
+                intent.setAction(HookMain.ACTION_XTELE_COLLECT);
+                sendBroadcast(intent);
+
             }
         });
         TextView tv_logout = findViewById(R.id.tv_logout);
@@ -693,7 +714,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < stringList.size(); i++) {
                         try {
                             String s = stringList.get(i);
-                            LoggerUtil.logI(TAG,"sss  687---->"+s);
+                            LoggerUtil.logI(TAG, "sss  687---->" + s);
                             String[] split = s.split("-");
                             String s1 = split[1];
 
@@ -906,10 +927,10 @@ public class MainActivity extends AppCompatActivity {
 
                     LoggerUtil.logI(TAG, "success  897--->" + success + "---->" + read);
 
-                    if (TextUtils.isEmpty(success)){
+                    if (TextUtils.isEmpty(success)) {
                         success = "0";
                     }
-                    if (TextUtils.isEmpty(read)){
+                    if (TextUtils.isEmpty(read)) {
                         read = "0";
                     }
 

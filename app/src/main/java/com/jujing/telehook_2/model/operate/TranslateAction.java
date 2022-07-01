@@ -162,27 +162,30 @@ public class TranslateAction {
                 return lang;
             }
         }
-        if (text.equalsIgnoreCase("hi")||text.equalsIgnoreCase("hello")) {
+        if (text.equalsIgnoreCase("hi") || text.equalsIgnoreCase("hello")) {
             WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
             return "error";
         }
 
         String c = text.toLowerCase();
-        if (c.contains("okk")){
+        if (c.contains("okk")) {
             LoggerUtil.logI(TAG + talker_id, "c 172: " + c);
             String c1 = c.replace(".", "");
-            if (c1.equals("okk")){
+            if (c1.equals("okk")) {
                 WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
                 return "error";
             }
         }
-        if (c.contains("hai")){
+        if (c.contains("hai")) {
             LoggerUtil.logI(TAG + talker_id, "c 180: " + c);
             String c1 = c.replace(".", "");
-            if (c1.equals("hai")){
+            if (c1.equals("hai")) {
                 WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
                 return "error";
             }
+        }
+        if (c.startsWith("ya")) {
+            text = text.replace("ya", "");
         }
 
         final String[] result2 = {""};
