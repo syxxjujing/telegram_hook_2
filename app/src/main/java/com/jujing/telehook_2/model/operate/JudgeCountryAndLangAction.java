@@ -1750,21 +1750,27 @@ public class JudgeCountryAndLangAction {
 
                     if (s1.contains("iraq") || s1.contains("\uD83C\uDDEE\uD83C\uDDF6")) {//伊拉克
                         country = "elak";
+                        break;
                     }
                     if (s1.contains("iran") || s1.contains("\uD83C\uDDEE\uD83C\uDDF7")) {//伊朗
                         country = "elang";
+                        break;
                     }
                     if (s1.contains("bangladesh") || s1.contains("\uD83C\uDDE7\uD83C\uDDE9")) {//孟加拉国
                         country = "mangj";
+                        break;
                     }
                     if (s1.contains("saudi") || s1.contains("arabia") || s1.contains("\uD83C\uDDF8\uD83C\uDDE6")) {//沙特阿拉伯
                         country = "shate";
+                        break;
                     }
                     if (s1.contains("georgia") || s1.contains("\uD83C\uDDEC\uD83C\uDDEA")) {//格鲁吉亚
                         country = "gelu";
+                        break;
                     }
                     if (s1.contains("russian") || s1.contains("\uD83C\uDDF7\uD83C\uDDFA")) {//俄罗斯
                         country = "eluos";
+                        break;
                     }
                     if (s1.contains("italy") || s1.contains("italian") || s1.contains("rome") || s1.contains("\uD83C\uDDEE\uD83C\uDDF9")) {
                         country = "eteli";
@@ -1772,18 +1778,23 @@ public class JudgeCountryAndLangAction {
                     }
                     if (s1.contains("türkiye") || s1.contains("turkey") || s1.contains("turkiye") || s1.contains("\uD83C\uDDF9\uD83C\uDDF7")) {//土耳其
                         country = "tuerq";
+                        break;
                     }
                     if (s1.contains("chad") || s1.contains("\uD83C\uDDF9\uD83C\uDDE9")) {//乍得
                         country = "zhade";
+                        break;
                     }
                     if (s1.contains("uzbekistan") || s1.contains("\uD83C\uDDFA\uD83C\uDDFF")) {//乌兹别克斯坦
                         country = "wuzi";
+                        break;
                     }
                     if (s1.contains("canada") || s1.contains("\uD83C\uDDE8\uD83C\uDDE6")) {//加拿大
                         country = "jianada";
+                        break;
                     }
                     if (s1.contains("ukraine") || s1.contains("\uD83C\uDDFA\uD83C\uDDE6")) {//乌克兰
                         country = "wukelan";
+                        break;
                     }
 
                     if (s1.contains("france") || s1.contains("frenchman") || s1.contains("french") || s1.contains("paris") || s1.contains("\uD83C\uDDEB\uD83C\uDDF7")) {

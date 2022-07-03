@@ -85,14 +85,14 @@ public class UsersAndChats {
         return 0;
     }
 
-    public static Object getChat(int dialog_id) {
-        Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", classLoader);
-
-
-        Object getInstance = XposedHelpers.callStaticMethod(MessagesStorage, "getInstance", 0);
-        return XposedHelpers.callMethod(getInstance, "getChat", dialog_id);
-//        return XposedHelpers.callMethod(getInstance, "getChatFull", dialog_id);
-    }
+//    public static Object getChat(int dialog_id) {
+//        Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", classLoader);
+//
+//
+//        Object getInstance = XposedHelpers.callStaticMethod(MessagesStorage, "getInstance", 0);
+//        return XposedHelpers.callMethod(getInstance, "getChat", dialog_id);
+////        return XposedHelpers.callMethod(getInstance, "getChatFull", dialog_id);
+//    }
 
     public static Object getChat2(long dialog_id) {
         Class<?> MessagesController = XposedHelpers.findClass("org.telegram.messenger.MessagesController", classLoader);

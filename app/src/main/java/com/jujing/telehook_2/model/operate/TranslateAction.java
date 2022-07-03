@@ -167,6 +167,13 @@ public class TranslateAction {
             return "error";
         }
 
+        String[] s = text.split(" ");
+        if (s.length < 3) {//小于3个单词的不要检测
+            LoggerUtil.logI(TAG + talker_id, "小于三个单词--->" + text);
+            WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
+            return "error";
+        }
+
         String c = text.toLowerCase();
         if (c.contains("okk")) {
             LoggerUtil.logI(TAG + talker_id, "c 172: " + c);

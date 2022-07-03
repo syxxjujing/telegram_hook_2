@@ -14,6 +14,7 @@ import com.jujing.telehook_2.hook.HookConnection;
 import com.jujing.telehook_2.hook.HookDialog;
 import com.jujing.telehook_2.hook.HookHttp;
 import com.jujing.telehook_2.hook.HookMessage;
+import com.jujing.telehook_2.hook.HookRequest;
 import com.jujing.telehook_2.hook.HookRun;
 import com.jujing.telehook_2.hook.HookSqlite;
 import com.jujing.telehook_2.hook.HookUserInfos;
@@ -33,6 +34,7 @@ import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
 import com.jujing.telehook_2.model.operate.LoadFullUserAction;
 import com.jujing.telehook_2.model.operate.SearchContactAction;
+import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.UserReadAction;
 import com.jujing.telehook_2.util.AbstractCrashReportHandler;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -154,6 +156,10 @@ public class HookMain implements IXposedHookLoadPackage {
         AddAndInviteGroupAction.hook();
         CrashReport.initCrashReport(context, "9e15f1224f", true);
 
+//        SwitchAccountAction.hook();
+
+//        HookRequest.hook();
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(HookMain.ACTION_XTELE_CONTACTS_BOOK_TRAN);
         intentFilter.addAction(HookMain.ACTION_XTELE_LOCAL_TRAN);
@@ -197,6 +203,7 @@ public class HookMain implements IXposedHookLoadPackage {
                     SystemClock.sleep(5000);
                     UsersAndChats.getContactsInfo();
 
+//                    SwitchAccountAction.hook();
 
                     String is_start_caiji = WriteFileUtil.read(Global.IS_START_CAIJI);
                     LoggerUtil.logI(TAG, "is_start_caiji  191---->" + is_start_caiji);

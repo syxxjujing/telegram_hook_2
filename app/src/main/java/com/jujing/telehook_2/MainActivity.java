@@ -593,23 +593,23 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true) {
-//                    try {
-//                        Intent intent = new Intent();
-//                        intent.putExtra("path", "check_result");
-//                        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
-//                        sendBroadcast(intent);
-//
-//                    } catch (Exception e) {
-//
-//                    }
-//                    SystemClock.sleep(1000 * 30);
-//                }
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.putExtra("path", "check_result");
+                        intent.setAction(HookMain.ACTION_XTELE_COLLECT);
+                        sendBroadcast(intent);
+
+                    } catch (Exception e) {
+
+                    }
+                    SystemClock.sleep(1000 * 30);
+                }
+            }
+        }).start();
 
 
     }

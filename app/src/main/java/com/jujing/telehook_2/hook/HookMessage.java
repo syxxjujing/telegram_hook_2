@@ -1,5 +1,7 @@
 package com.jujing.telehook_2.hook;
 
+import static com.jujing.telehook_2.HookMain.classLoader;
+
 import android.os.SystemClock;
 import android.text.TextUtils;
 
@@ -38,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,43 +97,43 @@ public class HookMessage {
 //        });
         LoggerUtil.logI(TAG, "hook end 58");
 
-        Class<?> SQLiteDatabase = XposedHelpers.findClass("org.telegram.SQLite.SQLiteDatabase", HookMain.classLoader);
-        XposedBridge.hookAllMethods(SQLiteDatabase, "executeFast", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                try {
-                    String sql = (String) param.args[0];
-//                    LoggerUtil.logAll(TAG,"sql  103---->"+sql);
-                    if (sql.equals("REPLACE INTO messages_v2 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 0)")){
-//                        HookUtil.frames();
-                    }
-
-                    if (sql.contains("UPDATE messages_v2 SET read_state")) {
-
-                        String[] arr = sql.split(" ");
-                        String uid = arr[11];
-                        String mid = arr[19];
-                        if (uid.equals("?")) {
-                            return;
-                        }
-                        if (uid.startsWith("-")) {
-                            return;
-                        }
-                        if (mid.equals("0")) {
-                            return;
-                        }
-                        if (mid.equals("?")) {
-                            return;
-                        }
-                        UserReadAction.checkSendSucceedNum(false);
-
-                    }
-                } catch (Exception e) {
-                    LoggerUtil.logI(TAG, "eee 124--->" + CrashHandler.getInstance().printCrash(e));
-                }
-            }
-        });
+//        Class<?> SQLiteDatabase = XposedHelpers.findClass("org.telegram.SQLite.SQLiteDatabase", classLoader);
+//        XposedBridge.hookAllMethods(SQLiteDatabase, "executeFast", new XC_MethodHook() {
+//            @Override
+//            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+//                super.afterHookedMethod(param);
+//                try {
+//                    String sql = (String) param.args[0];
+////                    LoggerUtil.logAll(TAG,"sql  103---->"+sql);
+//                    if (sql.equals("REPLACE INTO messages_v2 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, 0)")){
+////                        HookUtil.frames();
+//                    }
+//
+//                    if (sql.contains("UPDATE messages_v2 SET read_state")) {
+//
+//                        String[] arr = sql.split(" ");
+//                        String uid = arr[11];
+//                        String mid = arr[19];
+//                        if (uid.equals("?")) {
+//                            return;
+//                        }
+//                        if (uid.startsWith("-")) {
+//                            return;
+//                        }
+//                        if (mid.equals("0")) {
+//                            return;
+//                        }
+//                        if (mid.equals("?")) {
+//                            return;
+//                        }
+//                        UserReadAction.checkSendSucceedNum(false);
+//
+//                    }
+//                } catch (Exception e) {
+//                    LoggerUtil.logI(TAG, "eee 124--->" + CrashHandler.getInstance().printCrash(e));
+//                }
+//            }
+//        });
 //        Class<?> aClass = XposedHelpers.findClass("org.telegram.tgnet.ConnectionsManager", HookMain.classLoader);
 //        XposedBridge.hookAllMethods(aClass, "onUnparsedMessageReceived", new XC_MethodHook() {
 //            @Override
@@ -140,7 +144,7 @@ public class HookMessage {
 //            }
 //        });
 
-        Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", HookMain.classLoader);
+        Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", classLoader);
 //        XposedBridge.hookAllMethods(MessagesStorage, "putMessagesInternal", new XC_MethodHook() {
         XposedBridge.hookAllMethods(MessagesStorage, "putMessages", new XC_MethodHook() {
             @Override
@@ -356,8 +360,42 @@ public class HookMessage {
 //                                        searchContactAction.seachUsers("+639565471115");
 
 //                                        ImportContactsAction.importContact("+63 916 517 1456");
-                                        GetNearbyDataAction.getNearByData();
+//                                        GetNearbyDataAction.getNearByData();
+                                        HookActivity.baseActivity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 360----->"  + "---->" + HookActivity.baseActivity);
+                                                    Method switchToAccount = HookActivity.baseActivity.getClass().getMethod("switchToAccount", int.class, boolean.class);
+                                                    switchToAccount.invoke(HookActivity.baseActivity,1,true);
+//                                        HookActivity.baseActivity.
+//                                        XposedHelpers.callMethod(HookActivity.baseActivity,"switchToAccount",1,true);
+                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 366----->"  + "---->" + message);
+                                                } catch (NoSuchMethodException e) {
+
+                                                } catch (IllegalAccessException e) {
+                                                    e.printStackTrace();
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+
+
                                     }
+                                    if (message.toString().contains("jujing998")){
+                                        int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
+                                        LoggerUtil.logI(TAG + from_id, "currentUserId 386----->"  + "---->" + currentUserId);
+//                                        currentUserId 386----->---->1
+                                    }
+                                    if (message.toString().contains("jujing997")){
+                                        Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
+                                        int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
+                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
+
+
+                                    }
+
 //                                    boolean isCountry = false;
                                     String country = JudgeCountryAndLangAction.judgeCountry(from_id, message.toString());
                                     LoggerUtil.logI(TAG + from_id, "country 441----->" + country + "---->" + message);
