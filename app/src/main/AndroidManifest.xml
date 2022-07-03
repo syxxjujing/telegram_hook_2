@@ -62,6 +62,9 @@
         <activity android:name=".GroupListActivity" />
         <activity android:name=".GroupAddMemberActivity" />
         <activity android:name=".ImportBookActivity" />
+        <activity android:name=".SayHiActivity" />
+        <activity android:name=".SayHiFirstActivity" />
+        <activity android:name=".SayHiSecondActivity" />
     </application>
 
 </manifest>

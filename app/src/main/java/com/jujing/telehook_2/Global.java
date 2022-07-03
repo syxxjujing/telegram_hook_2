@@ -3,7 +3,7 @@ package com.jujing.telehook_2;
 import android.os.Environment;
 
 public class Global {
-    public static final String XPOSED_CODE = "127";//TODO 测试  记得改isDebug！！！
+    public static final String XPOSED_CODE = "128";//TODO 测试  记得改isDebug！！！
     public static boolean IS_USE = false;//TODO 测试  false 是 nkt  记得改appName   nkt是疯狂
     public static boolean IS_DEBUG = false;//TODO 测试
     public static boolean IS_DEBUG_STNLOGIC = false;//TODO 测试
@@ -22,12 +22,14 @@ public class Global {
     public static final String  ACTION_APP_LOG_4 = "action_app_log_tele_4";
     public static final String  ACTION_APP_LOG_5 = "action_app_log_tele_5";
     public static final String  ACTION_APP_LOG_6 = "action_app_log_tele_6";
+    public static final String  ACTION_APP_LOG_7 = "action_app_log_tele_7";
     public static final String STORAGE_APP_LOG = storage + "/storage_app_log";//
     public static final String STORAGE_APP_LOG_2 = storage + "/storage_app_log_2";//
     public static final String STORAGE_APP_LOG_3 = storage + "/storage_app_log_3";//
     public static final String STORAGE_APP_LOG_4 = storage + "/storage_app_log_4";//
     public static final String STORAGE_APP_LOG_5 = storage + "/storage_app_log_5";//
     public static final String STORAGE_APP_LOG_6 = storage + "/storage_app_log_6";//
+    public static final String STORAGE_APP_LOG_7 = storage + "/storage_app_log_7";//
     public static final String STORAGE_KEY= storage + "/key";//
     public static final String BAN_LOGIN = storage + "/ban_login";
 
@@ -115,6 +117,7 @@ public class Global {
 
 
     public static final String STORAGE_LOCAL_REPLY_JSON = storage + "/local_reply_json.json";
+    public static final String STORAGE_LOCAL_REPLY_JSON_2 = storage + "/local_reply_json_2.json";
     public static final String INTERVAL_FRIENDS = storage + "/interval_friends";
     public static final String INTERVAL_MESSAGES = storage + "/interval_messages";
 
@@ -175,6 +178,9 @@ public class Global {
 
     public static final String COUNTRY_JUDGE = storage + "/country_judge/";
     public static final String LANG_JUDGE = storage + "/lang_judge/";
+
+    public static final String IS_ONLY_UNREAD = storage + "/is_only_unread";
+    public static final String SAY_HI_ROUND_INTERVAL = storage + "/say_hi_round_interval";
 
 
 

@@ -34,26 +34,32 @@ public class SearchContactAction {
 
 
     private static final String TAG = "SearchContactAction";
+    public static List<Long> firstIdList = new ArrayList<>();//记录第一轮获取成功人的id
 
     public static void handle(String path) {
         try {
             if (UsersAndChats.isStart) {
-                HookActivity.showToast("正在转发，请稍候...");
+                LoggerUtil.sendLog7("正在转发，请稍候...");
                 return;
             }
             UsersAndChats.isStart = true;
-            HookActivity.showToast("开始转发...");
+            LoggerUtil.sendLog7("开始转发...");
             List<String> stringList = WriteFileUtil.readFile(path);
             LoggerUtil.logI(TAG, "stringList  38---->" + stringList.size());
-
+            LoggerUtil.sendLog7("共有" + stringList.size() + "个好友");
+            String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+            if (judgeSayHiContent1(replyJson)) {
+                return;
+            }
+            firstIdList.clear();
             for (int i = 0; i < stringList.size(); i++) {
                 String friends = stringList.get(i);
                 LoggerUtil.logI(TAG, "friends 55 :" + friends + "-----" + i);
                 if (judgeSent(friends)) {
                     LoggerUtil.logI(TAG, "以前发送过了 51 :" + friends + "-----" + i);
+                    LoggerUtil.sendLog7("第" + (i + 1) + "个好友：" + friends + "，以前发送过了");
                     continue;
                 }
-
                 //发送成功消息 就记录一下，下次就不发了
                 String sent_messages_user = WriteFileUtil.read(Global.SENT_MESSAGES_USER);
                 if (TextUtils.isEmpty(sent_messages_user)) {
@@ -62,7 +68,7 @@ public class SearchContactAction {
                     WriteFileUtil.write(sent_messages_user + "," + friends, Global.SENT_MESSAGES_USER);
                 }
 
-
+                LoggerUtil.sendLog7("开始搜索第" + (i + 1) + "个好友：" + friends);
                 isSendFinished = false;
                 SearchContactAction searchContactAction = new SearchContactAction();
                 searchContactAction.seachUsers(friends);
@@ -73,6 +79,7 @@ public class SearchContactAction {
                         if (!UsersAndChats.isStart) {
                             LoggerUtil.logI(TAG, "任务停止了 60 :" + isSendFinished + "-----" + j + "---->" + friends + "---->" + i);
                             HookActivity.showToast("任务停止了！!!");
+                            LoggerUtil.sendLog7("任务停止了！!!");
                             return;
                         }
 
@@ -81,34 +88,142 @@ public class SearchContactAction {
                         break;
                     }
                 }
-                int interval_friends = 0;
                 String interval_friends0 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
-                if (interval_friends0.contains("-")) {
-                    String[] split = interval_friends0.split("-");
-                    int start = Integer.parseInt(split[0]);
-                    int end = Integer.parseInt(split[1]);
-                    interval_friends = RandomUtil.randomNumber(start, end);
-                } else {
-                    interval_friends = Integer.parseInt(interval_friends0);
-                }
+                int interval_friends = timeFormat(interval_friends0);
 
-                LoggerUtil.logI(TAG, "interval_friends 94 :" + interval_friends);
-                for (int k = 0; k < interval_friends; k++) {
-                    if (!UsersAndChats.isStart) {
-                        LoggerUtil.logI(TAG, "任务停止了 72 :" + interval_friends + "-----" + k + "---->" + friends + "---->" + i);
-                        HookActivity.showToast("任务停止了！!!");
-                        return;
-                    }
-                    SystemClock.sleep(1000);
+                LoggerUtil.logI(TAG, "interval_friends 97 :" + interval_friends);
+                if (sleepTime(interval_friends)) {
+                    return;
                 }
 
             }
+            String say_hi_round_interval0 = WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL);
+            int say_hi_round_interval = timeFormat(say_hi_round_interval0);
+            LoggerUtil.sendLog7("第一轮结束，间隔" + say_hi_round_interval + "秒后，开始第二轮");
+            LoggerUtil.logI(TAG, "say_hi_round_interval 106 :" + say_hi_round_interval);
+            if (sleepTime(say_hi_round_interval)) {
+                return;
+            }
+
+            String replyJson_2 = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON_2);
+            if (judgeSayHiContent2(replyJson_2)) {
+                return;
+            }
+            String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
+            LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
+            List<Long> readList = UserReadAction.checkReadNum();
+            LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread+"---->"+readList.size());
+            LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
+            for (int i = 0; i < firstIdList.size(); i++) {
+                long firstId = firstIdList.get(i);
+                if (is_only_unread.equals("true")) {
+                    boolean contains = readList.contains(firstId);
+                    LoggerUtil.logI(TAG, "firstId 117 :" + firstId + "--->" + contains + "--->" + i);
+                    if (contains) {
+                        LoggerUtil.sendLog7(firstId + "为已读了第一轮消息，故不发送第二轮");
+                        continue;
+                    }
+                }
+                sendMission(firstId, replyJson_2);
+            }
+
 
         } catch (Exception e) {
             LoggerUtil.logI(TAG, "eee  36 ---->" + CrashHandler.getInstance().printCrash(e));
         }
 //        UsersAndChats.isStart = false;
 
+    }
+
+    private static boolean sleepTime(int interval) {
+        for (int k = 0; k < interval; k++) {
+            if (!UsersAndChats.isStart) {
+                LoggerUtil.logI(TAG, "任务停止了 115 :" + interval + "-----" + k);
+                HookActivity.showToast("任务停止了！!!");
+                LoggerUtil.sendLog7("任务停止了！!!");
+                return true;
+            }
+            SystemClock.sleep(1000);
+        }
+        return false;
+    }
+
+    private static int timeFormat(String str) {
+        int interval_friends = 0;
+//        String interval_friends0 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
+        if (str.contains("-")) {
+            String[] split = str.split("-");
+            int start = Integer.parseInt(split[0]);
+            int end = Integer.parseInt(split[1]);
+            interval_friends = RandomUtil.randomNumber(start, end);
+        } else {
+            interval_friends = Integer.parseInt(str);
+        }
+        return interval_friends;
+    }
+
+    private static boolean judgeSayHiContent1(String replyJson) {
+        try {
+
+            LoggerUtil.logI(TAG, "replyJson 50 :" + replyJson);
+            JSONArray jsonArray = new JSONArray(replyJson);
+            if (jsonArray.length() == 0) {
+                LoggerUtil.sendLog7("第一轮打招呼消息为空，请去设置");
+                return true;
+            }
+            boolean isHave = false;
+            for (int j = 0; j < jsonArray.length(); j++) {
+                JSONObject jsonObject = new JSONObject(jsonArray.getString(j));
+                String content = jsonObject.getString("content");
+                LoggerUtil.logI(TAG, "content 60 :" + content + "-----" + j + "---->");
+                if (!TextUtils.isEmpty(content)) {
+                    isHave = true;
+                    break;
+                }
+            }
+            LoggerUtil.logI(TAG, "isHave 67 :" + isHave);
+            if (!isHave) {
+                LoggerUtil.sendLog7("第一轮打招呼消息为空，请去设置！！！");
+                return true;
+            }
+
+        } catch (Exception e) {
+            LoggerUtil.sendLog7("第一轮打招呼消息为空，请去设置！");
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean judgeSayHiContent2(String replyJson) {
+        try {
+
+            LoggerUtil.logI(TAG, "replyJson 169 :" + replyJson);
+            JSONArray jsonArray = new JSONArray(replyJson);
+            if (jsonArray.length() == 0) {
+                LoggerUtil.sendLog7("第二轮打招呼消息为空，请去设置");
+                return true;
+            }
+            boolean isHave = false;
+            for (int j = 0; j < jsonArray.length(); j++) {
+                JSONObject jsonObject = new JSONObject(jsonArray.getString(j));
+                String content = jsonObject.getString("content");
+                LoggerUtil.logI(TAG, "content 179 :" + content + "-----" + j + "---->");
+                if (!TextUtils.isEmpty(content)) {
+                    isHave = true;
+                    break;
+                }
+            }
+            LoggerUtil.logI(TAG, "isHave 185 :" + isHave);
+            if (!isHave) {
+                LoggerUtil.sendLog7("第二轮打招呼消息为空，请去设置！！！");
+                return true;
+            }
+
+        } catch (Exception e) {
+            LoggerUtil.sendLog7("第二轮打招呼消息为空，请去设置！");
+            return true;
+        }
+        return false;
     }
 
     public static boolean isSendFinished = false;
@@ -147,16 +262,19 @@ public class SearchContactAction {
                             String text = (String) XposedHelpers.getObjectField(error, "text");
                             int code = XposedHelpers.getIntField(error, "code");
                             LoggerUtil.logI(TAG, "搜索出错  153:" + text + ":" + code + "----->" + txt);
+                            LoggerUtil.sendLog7("搜索出错：" + text + ":" + code + "----->" + txt);
                             return;
                         }
                         if (response == null) {
                             LoggerUtil.logI(TAG, "搜索出错:response==null----》" + txt);
+                            LoggerUtil.sendLog7("搜索出错:response==null---->" + txt);
                             return;
                         }
 
                         ArrayList users = (ArrayList) XposedHelpers.getObjectField(response, "users");
                         if (users == null || users.isEmpty()) {
                             LoggerUtil.logI(TAG, "搜索出错:users==null||users.isEmpty----》" + txt);
+                            LoggerUtil.sendLog7("搜索出错:users==null||users.isEmpty---->" + txt);
                             isSendFinished = true;
                             return;
                         }
@@ -177,6 +295,8 @@ public class SearchContactAction {
 
                             if (t.equals(username)) {//忽略大小写
                                 LoggerUtil.logI(TAG, "搜索到用户 179----->" + username + " id:" + id + " first_name:" + first_name);
+                                LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
+                                firstIdList.add(id);
                                 //保存用户
                                 saveSearchUsers(id);
 //                                SendMessage.sendMessage0(currentAccount, "12346", id);
@@ -190,11 +310,14 @@ public class SearchContactAction {
 //                                }).start();
 
                             } else if (t.equals(username.toLowerCase())) {
+                                firstIdList.add(id);
                                 LoggerUtil.logI(TAG, "搜索到用户 193----->" + username + " id:" + id + " first_name:" + first_name);
+                                LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
 
                                 saveSearchUsers(id);
                             } else {
                                 isSendFinished = true;
+                                LoggerUtil.sendLog7("搜索失败！");
                             }
 
                         }
@@ -285,7 +408,8 @@ public class SearchContactAction {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                sendMission(user);
+                                String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+                                sendMission(user, replyJson);
                             }
                         }).start();
 
@@ -304,9 +428,9 @@ public class SearchContactAction {
 
     }
 
-    private void sendMission(long user_id) {
+    public static void sendMission(long user_id, String replyJson) {
         try {
-            String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+
             LoggerUtil.logI(TAG, "replyJson 289 :" + replyJson + "---->" + user_id);
             JSONArray jsonArray = new JSONArray(replyJson);
             for (int j = 0; j < jsonArray.length(); j++) {
@@ -316,8 +440,11 @@ public class SearchContactAction {
                 if (!UsersAndChats.isStart) {
                     LoggerUtil.logI(TAG, "任务停止了 300 :" + "-----" + j + "---->" + user_id);
                     HookActivity.showToast("任务停止了！");
+                    LoggerUtil.sendLog7("任务停止了！");
                     return;
                 }
+
+
                 if (sendM(user_id, j, content, TAG)) {
                     continue;
                 }

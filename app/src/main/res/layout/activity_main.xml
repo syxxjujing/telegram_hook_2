@@ -54,7 +54,8 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="10dp"
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/et_content"
@@ -67,7 +68,8 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="10dp"
+        android:visibility="gone">
 
         <EditText
             android:id="@+id/et_interval"
@@ -88,28 +90,30 @@
             android:text="开始通讯录转发"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/btn_local_start"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="开始导入本地文件转发"
-            android:layout_weight="1"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <Button
-        android:id="@+id/btn_stop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="停止转发"/>
-        <Button
             android:id="@+id/btn_clear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="清除缓存"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+    <Button
+        android:id="@+id/btn_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text=""/>
+        <Button
+            android:id="@+id/btn_local_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_weight="1"/>
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
@@ -141,19 +145,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
         <Button
             android:id="@+id/btn_local_set"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="导入本地打招呼设置"/>
+            android:text=""/>
         <Button
             android:id="@+id/btn_clear_dazhaohu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="清除打招呼设置"/>
+            android:text=""/>
     </LinearLayout>
 
     <LinearLayout
@@ -195,10 +200,17 @@
             android:layout_weight="1"
             android:text="清零弹窗数据" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_dazhaohu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="打招呼功能" />
     <ListView
         android:id="@+id/lv_reply"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
     <Button
         android:id="@+id/btn_collect"
         android:layout_width="match_parent"

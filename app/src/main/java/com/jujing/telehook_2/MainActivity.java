@@ -141,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btn_dazhaohu = findViewById(R.id.btn_dazhaohu);
+        btn_dazhaohu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SayHiActivity.class));
+
+            }
+        });
+
 //        ExecutorUtil.doExecute(new Runnable() {
 //            @Override
 //            public void run() {

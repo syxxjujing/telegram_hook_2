@@ -233,7 +233,7 @@ public class UserReadAction {
 
     }
 
-    public static int checkReadNum() {
+    public static List<Long> checkReadNum() {
         String sql = "SELECT distinct uid FROM messages_v2 where out=1 and uid>0 and read_state =3";
         Object database = getDatabase(HookMain.classLoader);
         Object[] aaaa = new Object[]{sql, new Object[]{}};
@@ -259,10 +259,10 @@ public class UserReadAction {
                 Object username = XposedHelpers.getObjectField(user, "username");
                 Object first_name = XposedHelpers.getObjectField(user, "first_name");
 
-                LoggerUtil.logI(TAG, "checkReadNum  262---->" + uid + "---->" + read_state + "---->" + send_state + "---->" + username + "---->" + first_name);
+//                LoggerUtil.logI(TAG, "checkReadNum  262---->" + uid + "---->" + read_state + "---->" + send_state + "---->" + username + "---->" + first_name);
 
                 boolean b = judgeAd(uid);
-                LoggerUtil.logI(TAG, "judgeAd   265---->" + uid + "---->" + b);
+//                LoggerUtil.logI(TAG, "judgeAd   265---->" + uid + "---->" + b);
                 if (!b) {
                     readList.add(uid);
                 }
@@ -274,11 +274,11 @@ public class UserReadAction {
 
         XposedHelpers.callMethod(cursor, "dispose");
 
-        return readList.size();
+        return readList;
     }
 
     public static int checkReadState(long mid) {
-        String sql = "SELECT read_state FROM messages_v2 where uid="+mid;
+        String sql = "SELECT read_state FROM messages_v2 where uid=" + mid;
         Object database = getDatabase(HookMain.classLoader);
         Object[] aaaa = new Object[]{sql, new Object[]{}};
         Object cursor = XposedHelpers.callMethod(database, "queryFinalized", aaaa);
@@ -286,7 +286,7 @@ public class UserReadAction {
         int read_state = -1;
         while ((boolean) XposedHelpers.callMethod(cursor, "next")) {
             try {
-                 read_state = (int) XposedHelpers.callMethod(cursor, "intValue", 0);
+                read_state = (int) XposedHelpers.callMethod(cursor, "intValue", 0);
 
             } catch (Exception e) {
                 LoggerUtil.logI(TAG, "eee  271----》" + CrashHandler.getInstance().printCrash(e));
@@ -297,6 +297,7 @@ public class UserReadAction {
 
         return read_state;
     }
+
     public static void checkSendSucceedNum(boolean isShowToast) {
         try {
             //read_state ，1未发送 ，2已发送但是对方未读取,3对方已读
@@ -337,7 +338,7 @@ public class UserReadAction {
                     Object username = XposedHelpers.getObjectField(user, "username");
                     Object first_name = XposedHelpers.getObjectField(user, "first_name");
 
-                    LoggerUtil.logI(TAG, "read_state & send_state  257---->" + uid + "---->" + read_state + "---->" + send_state + "---->" + username + "---->" + first_name);
+//                    LoggerUtil.logI(TAG, "read_state & send_state  257---->" + uid + "---->" + read_state + "---->" + send_state + "---->" + username + "---->" + first_name);
 
 
                     if (send_state == 0) {
@@ -363,8 +364,10 @@ public class UserReadAction {
             XposedHelpers.callMethod(cursor, "dispose");
 
 
-            int readNum = checkReadNum();
-            LoggerUtil.logI(TAG, "readNum  348----》" + readNum);
+//
+            List<Long> longs = checkReadNum();
+            int readNum = longs.size();
+//            LoggerUtil.logI(TAG, "readNum  348----》" + readNum);
 
 
             if (sentSuccessList.size() != 0) {

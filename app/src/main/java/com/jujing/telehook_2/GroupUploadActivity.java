@@ -64,7 +64,6 @@ public class GroupUploadActivity extends AppCompatActivity {
                             final String url = UploadFileUtil.uploadFile(dest);
 
 
-//                    SendMessageAction.sendFile(Global.XPOSED_CODE+"log.zip",Global.XPOSED_CODE+"log.zip",dest,talker);
                             LoggerUtil.logI(TAG, "url  60---->" + url);
 
 

@@ -426,6 +426,7 @@ public class HookMain implements IXposedHookLoadPackage {
                 String inerval_friends = intent.getStringExtra("content");
                 if (inerval_friends.equals("stop")) {
                     UsersAndChats.isStart = false;
+                    LoggerUtil.sendLog7("准备停止任务！");
                     return;
                 }
                 new Thread(new Runnable() {

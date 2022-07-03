@@ -134,7 +134,7 @@ public class SendMessage {
             public void run() {
                 //以下是发送文字的
                 Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", classLoader);
-                Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", 0);
+                Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
                 if (isChat) {
                     XposedHelpers.callMethod(getInstance, "sendMessage", content, id * -1, null, null, true, null, null, null);
                 } else {
@@ -160,7 +160,7 @@ public class SendMessage {
             public void run() {
                 //以下是发送图片的
                 Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", classLoader);
-                Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", 0);
+                Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
                 Object generatePhotoSizes = XposedHelpers.callMethod(getInstance, "generatePhotoSizes", path, null);
 //                sss  54--->org.telegram.tgnet.TLRPC$TL_photo@f102266,null,746055308,null,null,null,null,{groupId=0, originalPath=/storage/emulated/0/11Siri/bgBottomBitmap.png30971_1561946476000, final=1},0,null,
                 HashMap<String, String> params = new HashMap<>();
@@ -200,7 +200,7 @@ public class SendMessage {
                 public void run() {
                     //以下是发送图片的
                     Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", classLoader);
-                    Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", 0);
+                    Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
 
                     Class<?> TLRPC$TL_document = XposedHelpers.findClass("org.telegram.tgnet.TLRPC$TL_document", classLoader);
                     Object tl_document = XposedHelpers.newInstance(TLRPC$TL_document);
@@ -360,7 +360,7 @@ public class SendMessage {
                 public void run() {
                     //以下是发送图片的
                     Class<?> aClass = XposedHelpers.findClass("org.telegram.messenger.SendMessagesHelper", classLoader);
-                    Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", 0);
+                    Object getInstance = XposedHelpers.callStaticMethod(aClass, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
 
                     Class<?> TLRPC$TL_document = XposedHelpers.findClass("org.telegram.tgnet.TLRPC$TL_document", classLoader);
                     Object tl_document = XposedHelpers.newInstance(TLRPC$TL_document);
@@ -551,7 +551,7 @@ public class SendMessage {
 
     public static void getFullUser(Object user, final long id) {
         Class<?> MessagesController = XposedHelpers.findClass("org.telegram.messenger.MessagesController", HookMain.classLoader);
-        Object getInstance = XposedHelpers.callStaticMethod(MessagesController, "getInstance", 0);
+        Object getInstance = XposedHelpers.callStaticMethod(MessagesController, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
 
         Object getInputUser = XposedHelpers.callMethod(getInstance, "getInputUser", id);
 

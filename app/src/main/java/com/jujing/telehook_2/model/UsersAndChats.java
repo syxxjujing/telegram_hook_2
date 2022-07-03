@@ -365,6 +365,7 @@ public class UsersAndChats {
             if (TextUtils.isEmpty(content)) {
                 return true;
             }
+            LoggerUtil.sendLog7("开始发送消息：" + content + "--->" + user_id);
             if (content.startsWith("语音") || content.startsWith("图片")
                     || content.startsWith("gif") || content.startsWith("视频")) {
                 String[] array = content.split(":");

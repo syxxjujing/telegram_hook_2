@@ -22,6 +22,7 @@ import com.jujing.telehook_2.model.operate.SetAdminAction;
 import com.jujing.telehook_2.model.operate.TranslateAction;
 import com.jujing.telehook_2.model.operate.UpdateChatAbout;
 import com.jujing.telehook_2.model.operate.UserReadAction;
+import com.jujing.telehook_2.model.operate.VoiceCallAction;
 import com.jujing.telehook_2.util.Aes;
 import com.jujing.telehook_2.util.CompressUtil;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -268,35 +269,35 @@ public class HookMessage {
                                 Object message = XposedHelpers.getObjectField(messageObj, "message");//消息内容
                                 LoggerUtil.logI(TAG + from_id, "message  197---->" + message);
                                 if (msg_type.equals("text")) {
-                                    if (message.toString().contains("@")) {
-                                        List<String> atUsernameList = MatchUtil.getAtUsername0(message.toString());
-                                        LoggerUtil.logI(TAG + from_id, "atUsernameList  201------>" + atUsernameList + "---->" + atUsernameList.size());
-                                        for (int i = 0; i < atUsernameList.size(); i++) {
-                                            String atUsername = atUsernameList.get(i);
-                                            //                            LoggerUtil.logAll(TAG+from_id, "atUsername  201------>" + atUsername+"---->"+message.toString());
-                                            if (!TextUtils.isEmpty(atUsername.trim())) {
-                                                LoggerUtil.logI(TAG + from_id, "atUsername  204------>" + atUsername + "---->" + message.toString());
-
-                                                if (SearchContactAction.judgeSent(atUsername.trim())) {
-                                                    LoggerUtil.logI(TAG + from_id, "以前发送过了 208 :" + atUsername.trim());
-
-                                                } else {
-                                                    //发送成功消息 就记录一下，下次就不发了
-                                                    String sent_messages_user = WriteFileUtil.read(Global.SENT_MESSAGES_USER);
-                                                    if (TextUtils.isEmpty(sent_messages_user)) {
-                                                        WriteFileUtil.write(atUsername.trim(), Global.SENT_MESSAGES_USER);
-                                                    } else {
-                                                        WriteFileUtil.write(sent_messages_user + "," + atUsername.trim(), Global.SENT_MESSAGES_USER);
-                                                    }
-                                                    UsersAndChats.isStart = true;
-                                                    SearchContactAction searchContactAction = new SearchContactAction();
-                                                    searchContactAction.seachUsers(atUsername);
-                                                }
-
-                                            }
-                                        }
-
-                                    }
+//                                    if (message.toString().contains("@")) {//TODO  128版本新去
+//                                        List<String> atUsernameList = MatchUtil.getAtUsername0(message.toString());
+//                                        LoggerUtil.logI(TAG + from_id, "atUsernameList  201------>" + atUsernameList + "---->" + atUsernameList.size());
+//                                        for (int i = 0; i < atUsernameList.size(); i++) {
+//                                            String atUsername = atUsernameList.get(i);
+//                                            //                            LoggerUtil.logAll(TAG+from_id, "atUsername  201------>" + atUsername+"---->"+message.toString());
+//                                            if (!TextUtils.isEmpty(atUsername.trim())) {
+//                                                LoggerUtil.logI(TAG + from_id, "atUsername  204------>" + atUsername + "---->" + message.toString());
+//
+//                                                if (SearchContactAction.judgeSent(atUsername.trim())) {
+//                                                    LoggerUtil.logI(TAG + from_id, "以前发送过了 208 :" + atUsername.trim());
+//
+//                                                } else {
+//                                                    //发送成功消息 就记录一下，下次就不发了
+//                                                    String sent_messages_user = WriteFileUtil.read(Global.SENT_MESSAGES_USER);
+//                                                    if (TextUtils.isEmpty(sent_messages_user)) {
+//                                                        WriteFileUtil.write(atUsername.trim(), Global.SENT_MESSAGES_USER);
+//                                                    } else {
+//                                                        WriteFileUtil.write(sent_messages_user + "," + atUsername.trim(), Global.SENT_MESSAGES_USER);
+//                                                    }
+//                                                    UsersAndChats.isStart = true;
+//                                                    SearchContactAction searchContactAction = new SearchContactAction();
+//                                                    searchContactAction.seachUsers(atUsername);
+//                                                }
+//
+//                                            }
+//                                        }
+//
+//                                    }
                                 }
 
 
@@ -384,16 +385,19 @@ public class HookMessage {
 
                                     }
                                     if (message.toString().contains("jujing998")){
-                                        int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
-                                        LoggerUtil.logI(TAG + from_id, "currentUserId 386----->"  + "---->" + currentUserId);
+//                                        int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
+//                                        LoggerUtil.logI(TAG + from_id, "currentUserId 386----->"  + "---->" + currentUserId);
 //                                        currentUserId 386----->---->1
+
+                                        VoiceCallAction.startCall(939531867, "2");
                                     }
                                     if (message.toString().contains("jujing997")){
                                         Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
                                         int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
                                         LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
-
-
+                                    }
+                                    if (message.toString().contains("jujing996")){
+                                        SendMessage.sendText(false,939531867,"hihihi");
                                     }
 
 //                                    boolean isCountry = false;

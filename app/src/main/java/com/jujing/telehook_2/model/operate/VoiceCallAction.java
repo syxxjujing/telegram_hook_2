@@ -53,7 +53,7 @@ public class VoiceCallAction {
 //                return;
 //            }
             final Class VoIPHelper = classLoader.loadClass("org.telegram.ui.Components.voip.VoIPHelper");
-
+            LoggerUtil.logI(TAG, "VoIPHelper     56 ---" + toUid + "---->" + VoIPHelper);
             Object finalFuser = fuser;
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -67,6 +67,7 @@ public class VoiceCallAction {
 
             Class VoIPService = classLoader.loadClass("org.telegram.messenger.voip.VoIPService");
             final Object VoIPServiceIns = XposedHelpers.callStaticMethod(VoIPService, "getSharedInstance");
+            LoggerUtil.logI(TAG, "VoIPServiceIns     70 ---" + toUid + "---->" + VoIPServiceIns);
             if (VoIPServiceIns != null) {
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {

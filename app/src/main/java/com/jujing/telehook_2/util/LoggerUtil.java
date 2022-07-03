@@ -320,6 +320,27 @@ public class LoggerUtil {
         }
     }
 
+    public static void sendLog7(String str) {
+        writeLog7(str, HookActivity.baseActivity);
+    }
+
+    public static void writeLog7(String info, Context context) {
+        try {
+            LoggerUtil.logI(TAG, "打印的日志 7---->" + info);
+//        LogTool.d("打印的日志!!!--->$info")
+            String localLog = read100Line(Global.STORAGE_APP_LOG_7);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String date = "[" + df.format(new Date()) + "]:  ";
+            String log = date + info + "\n" + localLog;
+//        wrieFileByBufferedWriter(log,Global.STORAGE_APP_LOG);
+            WriteFileUtil.write(log, Global.STORAGE_APP_LOG_7);
+//        LoggerUtil.logAll(TAG,"context 101---->"+context);
+            Intent intent = new Intent(Global.ACTION_APP_LOG_7);
+            context.sendBroadcast(intent);
+        } catch (Exception e) {
+        }
+    }
+
     //使用BufferReader读取文件
     public static String read100Line(String path) {
         try {
