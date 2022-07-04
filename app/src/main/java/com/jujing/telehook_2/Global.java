@@ -3,7 +3,7 @@ package com.jujing.telehook_2;
 import android.os.Environment;
 
 public class Global {
-    public static final String XPOSED_CODE = "128";//TODO 测试  记得改isDebug！！！
+    public static final String XPOSED_CODE = "130";//TODO 测试  记得改isDebug！！！
     public static boolean IS_USE = false;//TODO 测试  false 是 nkt  记得改appName   nkt是疯狂
     public static boolean IS_DEBUG = false;//TODO 测试
     public static boolean IS_DEBUG_STNLOGIC = false;//TODO 测试

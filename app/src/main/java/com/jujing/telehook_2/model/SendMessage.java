@@ -194,7 +194,7 @@ public class SendMessage {
     public static void sendVideo(final boolean isChat, final long id, final String path) {
 
         try {
-            LoggerUtil.logI(TAG, "sendVideo  162 ---->" + id + "---->" + path);
+            LoggerUtil.logI(TAG, "sendVideo  197 ---->" + id + "---->" + path+"---->"+new File(path).exists());
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -259,6 +259,8 @@ public class SendMessage {
                         XposedHelpers.callMethod(getInstance, "sendMessage", tl_document, null, path
                                 , id, null, null, "", null, null, params, false, 0, 0, null, null);
                     }
+
+                    LoggerUtil.logI(TAG, "sendVideo  end 263 ---->" + id + "---->" + path+"---->"+new File(path).exists());
 
                 }
             };
@@ -354,7 +356,7 @@ public class SendMessage {
     public static void sendVoice(final long id, final String path) {
 
         try {
-            LoggerUtil.logI(TAG, "sendVoice  99 ---->" + id + "---->" + path);
+            LoggerUtil.logI(TAG, "sendVoice  99 ---->" + id + "---->" + path+"---->"+new File(path).exists());
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -367,7 +369,7 @@ public class SendMessage {
                     XposedHelpers.setLongField(tl_document, "id", 0);
 
                     Class<?> ConnectionsManager = XposedHelpers.findClass("org.telegram.tgnet.ConnectionsManager", classLoader);
-                    Object connectionsManager = XposedHelpers.callStaticMethod(ConnectionsManager, "getInstance", 0);
+                    Object connectionsManager = XposedHelpers.callStaticMethod(ConnectionsManager, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
                     int getCurrentTime = (int) XposedHelpers.callMethod(connectionsManager, "getCurrentTime");
                     LoggerUtil.logI(TAG, "getCurrentTime  106 ---->" + getCurrentTime);
                     XposedHelpers.setIntField(tl_document, "date", getCurrentTime);
@@ -413,6 +415,8 @@ public class SendMessage {
 //                    params.put("final", "1");
                     XposedHelpers.callMethod(getInstance, "sendMessage", tl_document, null, path
                             , id, null, null, "", null, null, params, false, 0, 0, null, null);
+
+                    LoggerUtil.logI(TAG, "sendVoice  end 417 ---->" + id + "---->" + path+"---->"+new File(path).exists());
                 }
             };
             LoggerUtil.logI(TAG, "HookActivity.baseActivity  101---->" + HookActivity.baseActivity + "------");

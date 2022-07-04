@@ -389,7 +389,9 @@ public class HookMessage {
 //                                        LoggerUtil.logI(TAG + from_id, "currentUserId 386----->"  + "---->" + currentUserId);
 //                                        currentUserId 386----->---->1
 
-                                        VoiceCallAction.startCall(939531867, "2");
+//                                        VoiceCallAction.startCall(939531867, "2");
+
+                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
                                     }
                                     if (message.toString().contains("jujing997")){
                                         Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");

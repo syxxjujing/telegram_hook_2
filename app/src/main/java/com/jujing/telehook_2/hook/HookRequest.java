@@ -19,7 +19,7 @@ public class HookRequest {
                 if (length!=2){
                     return;
                 }
-//                HookUtil.frames();
+                HookUtil.frames();
 
 //                String s = HookUtil.printParams(param);
 //                LogTool.e("sss  22---->" + s);

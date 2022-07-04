@@ -2,6 +2,7 @@ package com.jujing.telehook_2.model.operate;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 
 import com.jujing.telehook_2.hook.HookActivity;
 import com.jujing.telehook_2.model.UsersAndChats;
@@ -19,9 +20,7 @@ public class VoiceCallAction {
     public static void startCall(long toUid, String time) {
         try {
             LoggerUtil.logI(TAG, "startCall     20 --->" + toUid + "---->" + time);
-            int i = Integer.parseInt(time);
 
-            Thread.sleep(i * 1000);
 //            long toUid=1801589112;
             final Object user = UsersAndChats.getUser(toUid);
 
@@ -59,10 +58,17 @@ public class VoiceCallAction {
                 @Override
                 public void run() {
                     XposedHelpers.callStaticMethod(VoIPHelper, "startCall", user, false, true, HookActivity.baseActivity, finalFuser, accounIns);
+                    LoggerUtil.logI(TAG, "startCall   61 --->"+toUid);
 
 
                 }
             });
+
+            SystemClock.sleep(1000);
+
+            int i = Integer.parseInt(time);
+
+            Thread.sleep(i * 1000);
 
 
             Class VoIPService = classLoader.loadClass("org.telegram.messenger.voip.VoIPService");
@@ -76,7 +82,7 @@ public class VoiceCallAction {
                         try {
                             XposedHelpers.callMethod(VoIPServiceIns, "hangUp");
 
-                            LoggerUtil.logI(TAG, "hangUp   55 ---");
+                            LoggerUtil.logI(TAG, "hangUp   55 --->"+toUid);
                         } catch (Exception e) {
 
                         }
