@@ -9,6 +9,7 @@ import com.jujing.telehook_2.bean.LocalReplyBean;
 import com.jujing.telehook_2.hook.HookActivity;
 import com.jujing.telehook_2.hook.HookSqlite;
 import com.jujing.telehook_2.model.operate.SendForwardAction;
+import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.UserReadAction;
 import com.jujing.telehook_2.model.operate.VoiceCallAction;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -355,6 +356,8 @@ public class UsersAndChats {
 
     }
 
+    public static int sentNum = 0;
+
     public static boolean sendM(long user_id, int j, String content, String TAG) {
         try {
             WriteFileUtil.write(user_id + "", Global.SENT_UID + user_id);
@@ -365,7 +368,22 @@ public class UsersAndChats {
             if (TextUtils.isEmpty(content)) {
                 return true;
             }
-            LoggerUtil.sendLog7("开始发送消息：" + content + "--->" + user_id);
+            try {
+                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
+                LoggerUtil.logI(TAG, "switch_num  370---->" + switch_num + "---->" + sentNum);
+                if (sentNum != 0 && switch_num != 0) {
+                    if (sentNum % switch_num == 0) {
+                        SwitchAccountAction.handle();
+                    }
+                }
+
+            } catch (Exception e) {
+                LoggerUtil.logI(TAG, "eee  381---->" + CrashHandler.getInstance().printCrash(e));
+            }
+
+            sentNum++;
+            LoggerUtil.sendLog7("开始给第" + sentNum + "个人发消息");
+            LoggerUtil.sendLog7("发送消息：" + content + "--->" + user_id);
             if (content.startsWith("语音") || content.startsWith("图片")
                     || content.startsWith("gif") || content.startsWith("视频")) {
                 String[] array = content.split(":");
@@ -376,6 +394,7 @@ public class UsersAndChats {
                 boolean exists = new File(path).exists();
                 LoggerUtil.logI(TAG, "path 294 :" + path + "-----" + j + "---->" + exists + "---->" + content);
                 if (!exists) {
+                    LoggerUtil.sendLog7("发送失败，文件不存在！");
                     return true;
                 }
                 if (content.startsWith("语音")) {
@@ -411,6 +430,7 @@ public class UsersAndChats {
         }
         return false;
     }
+
 
     public static void getChatsInfos() {
         Object database = getDatabase(classLoader);

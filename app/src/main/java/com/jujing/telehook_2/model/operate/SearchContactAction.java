@@ -51,6 +51,7 @@ public class SearchContactAction {
             if (judgeSayHiContent1(replyJson)) {
                 return;
             }
+            UsersAndChats.sentNum = 0;
             firstIdList.clear();
             for (int i = 0; i < stringList.size(); i++) {
                 String friends = stringList.get(i);
@@ -114,6 +115,7 @@ public class SearchContactAction {
             List<Long> readList = UserReadAction.checkReadNum();
             LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread+"---->"+readList.size());
             LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
+            UsersAndChats.sentNum = 0;
             for (int i = 0; i < firstIdList.size(); i++) {
                 long firstId = firstIdList.get(i);
                 if (is_only_unread.equals("true")) {

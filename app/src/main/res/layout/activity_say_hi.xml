@@ -17,6 +17,7 @@
             android:theme="@style/MyEditText" />
 
     </android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,16 +31,32 @@
             android:theme="@style/MyEditText" />
 
     </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp">
+
+        <EditText
+            android:id="@+id/et_switch_num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="请输入转发几人后，切换账号"
+            android:theme="@style/MyEditText" />
+
+    </android.support.design.widget.TextInputLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/btn_first"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="设置第一轮"/>
+            android:text="设置第一轮" />
 
 
         <Button
@@ -49,16 +66,18 @@
             android:layout_weight="1"
             android:text="设置第二轮" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/btn_local_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="开始导入本地文件转发"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="开始导入本地文件转发" />
 
 
         <Button
@@ -68,6 +87,7 @@
             android:layout_weight="1"
             android:text="停止转发" />
     </LinearLayout>
+
     <ScrollView
         android:id="@+id/scrollview"
         android:layout_width="match_parent"

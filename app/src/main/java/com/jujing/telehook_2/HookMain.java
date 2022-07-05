@@ -18,6 +18,7 @@ import com.jujing.telehook_2.hook.HookRequest;
 import com.jujing.telehook_2.hook.HookRun;
 import com.jujing.telehook_2.hook.HookSqlite;
 import com.jujing.telehook_2.hook.HookUserInfos;
+import com.jujing.telehook_2.hook.HookVPN;
 import com.jujing.telehook_2.hook.OnFragmentCreate;
 import com.jujing.telehook_2.model.ContactsHandle;
 import com.jujing.telehook_2.model.SendMessage;
@@ -135,7 +136,7 @@ public class HookMain implements IXposedHookLoadPackage {
             return;
         }
 
-
+        HookVPN.hook();
 //        HookSqlite.hook();
         HookMessage.hook();
 //        HookUserInfos.hook();

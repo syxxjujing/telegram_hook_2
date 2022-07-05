@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.jujing.telehook_2.adapter.LocalReplyAdapter;
 import com.jujing.telehook_2.bean.LocalReplyBean;
+import com.jujing.telehook_2.hook.HookVPN;
 import com.jujing.telehook_2.model.operate.Mp3ToOggAction;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.ExecutorUtil;
@@ -459,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (checkSelfPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
-                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                        new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW},
                         3);
             }
         }
@@ -692,6 +693,9 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(HookMain.ACTION_XTELE_COLLECT);
         sendBroadcast(intent);
 
+//        boolean b = HookVPN.checkVPN();
+//
+//        LoggerUtil.logI(TAG, "bbb  698---->" + b);
 
     }
 
@@ -934,7 +938,7 @@ public class MainActivity extends AppCompatActivity {
                     String success = WriteFileUtil.read(Global.MESSAGE_SUCCESS_NUM);
                     String read = WriteFileUtil.read(Global.MESSAGE_READ_NUM);
 
-                    LoggerUtil.logI(TAG, "success  897--->" + success + "---->" + read);
+//                    LoggerUtil.logI(TAG, "success  897--->" + success + "---->" + read);
 
                     if (TextUtils.isEmpty(success)) {
                         success = "0";

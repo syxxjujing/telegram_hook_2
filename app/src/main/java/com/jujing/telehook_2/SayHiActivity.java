@@ -10,7 +10,9 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -157,6 +159,27 @@ public class SayHiActivity extends AppCompatActivity {
             LoggerUtil.logI(TAG, "e  343---->" + CrashHandler.getInstance().printCrash(e));
             Toast.makeText(this, "有异常！", Toast.LENGTH_SHORT).show();
         }
+
+        EditText et_switch_num = findViewById(R.id.et_switch_num);
+        et_switch_num.setText(WriteFileUtil.read(Global.SWITCH_NUM));
+        et_switch_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "SWITCH_NUM  179--->" + trim);
+                WriteFileUtil.write(trim, Global.SWITCH_NUM);
+            }
+        });
 
     }
 

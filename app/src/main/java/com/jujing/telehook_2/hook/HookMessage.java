@@ -19,6 +19,7 @@ import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
 import com.jujing.telehook_2.model.operate.SearchContactAction;
 import com.jujing.telehook_2.model.operate.SetAdminAction;
+import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.TranslateAction;
 import com.jujing.telehook_2.model.operate.UpdateChatAbout;
 import com.jujing.telehook_2.model.operate.UserReadAction;
@@ -391,7 +392,8 @@ public class HookMessage {
 
 //                                        VoiceCallAction.startCall(939531867, "2");
 
-                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
+//                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
+                                        SwitchAccountAction.handle();
                                     }
                                     if (message.toString().contains("jujing997")){
                                         Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
