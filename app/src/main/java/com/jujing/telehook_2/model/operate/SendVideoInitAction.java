@@ -73,15 +73,15 @@ public class SendVideoInitAction {
                     for (int i = 0; i < 120; i++) {
                         SayHiMessageBean bean = queryMessages();
                         LoggerUtil.logI(TAG, "bean  74---->" + bean + "---->" + i + "--->" + curTime);
-                        if (curTime <= bean.getDate() && bean.getMid() != 0) {
+                        if (curTime <= bean.getDate() && bean.getMid() > 0) {
                             break;
                         }
                         SystemClock.sleep(1000);
                     }
 
                     SayHiMessageBean bean = queryMessages();
-                    LoggerUtil.logI(TAG, "bean  68---->" + bean + "---->" + j + "--->" + curTime);
-                    if (curTime <= bean.date && bean.mid != 0) {
+                    LoggerUtil.logI(TAG, "bean  68---->" + bean + "---->" + j + "--->" + curTime);//-210072
+                    if (curTime <= bean.date && bean.mid > 0) {
                         WriteFileUtil.write(bean.getMid() + "", Global.SEND_VIDEO_MESSAGE + j);
                         LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏成功：" + content);
                     } else {
@@ -167,6 +167,7 @@ public class SendVideoInitAction {
 
                 long fullMid = (long) XposedHelpers.callMethod(cursor, "longValue", 3);
                 XposedHelpers.setIntField(TLRPCMessage, "id", (int) fullMid);
+                LoggerUtil.logI(TAG,"fullMid  170---->"+fullMid);
 
 
                 if ((fullMid & 0xffffffff00000000L) == 0xffffffff00000000L && send_state > 0) {

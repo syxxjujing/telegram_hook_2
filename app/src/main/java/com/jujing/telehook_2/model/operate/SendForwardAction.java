@@ -260,7 +260,7 @@ public class SendForwardAction {
                 @Override
                 public void run() {
                     XposedHelpers.callMethod(SendMessagesHelper, "sendMessage", sendMsg, toUid, false, false, true, 0);
-                    LoggerUtil.logI(TAG, "发送收藏  263");
+                    LoggerUtil.logI(TAG, "发送收藏  263--->"+mid);
                 }
             });
 
@@ -339,6 +339,7 @@ public class SendForwardAction {
 
                 long fullMid = (long) XposedHelpers.callMethod(cursor, "longValue", 3);
                 XposedHelpers.setIntField(TLRPCMessage, "id", (int) fullMid);
+                LoggerUtil.logI(TAG,"fullMid  342---->"+fullMid);
 
 
                 if ((fullMid & 0xffffffff00000000L) == 0xffffffff00000000L && send_state > 0) {

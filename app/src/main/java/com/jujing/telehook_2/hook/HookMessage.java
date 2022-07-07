@@ -380,7 +380,8 @@ public class HookMessage {
 
 //                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
 //                                        SwitchAccountAction.handle();
-                                        SendForwardAction.sendForwardMessages(dialog_id,1);
+//                                        SendForwardAction.sendForwardMessages(dialog_id,1);
+                                        SendForwardAction.sendForwardMessages(dialog_id,2);
                                     }
                                     if (message.toString().contains("jujing997")){
 //                                        Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
@@ -388,11 +389,11 @@ public class HookMessage {
 //                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
 
 //                                        SendMessage.sendVideo(false, getClientUserId(classLoader),"/sdcard/1atest/1.mp4");
-                                        for (int i = 0; i < 10; i++) {
-                                            String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 2);
-                                            LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 2 );
+//                                        for (int i = 0; i < 10; i++) {
+                                            String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 0);
+                                            LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 0 );
                                             SendForwardAction.sendForwardMessagesByMid(dialog_id,mid);
-                                        }
+//                                        }
 
                                     }
                                     if (message.toString().contains("jujing996")){
