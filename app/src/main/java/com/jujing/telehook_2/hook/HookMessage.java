@@ -1,41 +1,24 @@
 package com.jujing.telehook_2.hook;
 
 import static com.jujing.telehook_2.HookMain.classLoader;
-import static com.jujing.telehook_2.model.operate.Tools.getClientUserId;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
-import com.jujing.telehook_2.GroupAddMemberActivity;
-import com.jujing.telehook_2.HookMain;
 import com.jujing.telehook_2.HttpApi;
 import com.jujing.telehook_2.model.SendMessage;
 import com.jujing.telehook_2.model.UsersAndChats;
-import com.jujing.telehook_2.model.operate.GetNearbyDataAction;
-import com.jujing.telehook_2.model.operate.GroupAddMemberAction;
-import com.jujing.telehook_2.model.operate.ImportContactsAction;
-import com.jujing.telehook_2.model.operate.JoinToGroupAction;
 import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
-import com.jujing.telehook_2.model.operate.LoadFullUser;
-import com.jujing.telehook_2.model.operate.SearchContactAction;
 import com.jujing.telehook_2.model.operate.SendForwardAction;
 import com.jujing.telehook_2.model.operate.SendVideoInitAction;
-import com.jujing.telehook_2.model.operate.SetAdminAction;
-import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.TranslateAction;
-import com.jujing.telehook_2.model.operate.UpdateChatAbout;
-import com.jujing.telehook_2.model.operate.UserReadAction;
-import com.jujing.telehook_2.model.operate.VoiceCallAction;
 import com.jujing.telehook_2.util.Aes;
-import com.jujing.telehook_2.util.CompressUtil;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.DownloadUtil;
 import com.jujing.telehook_2.util.ExecutorUtil;
-import com.jujing.telehook_2.util.HookUtil;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.MatchUtil;
-import com.jujing.telehook_2.util.UploadFileUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -418,7 +401,7 @@ public class HookMessage {
                                             @Override
                                             public void run() {
                                                 String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-                                                SendVideoInitAction.initSayHiVideo(replyJson);
+                                                SendVideoInitAction.initSayHi(replyJson);
                                             }
                                         });
                                     }

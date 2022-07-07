@@ -18,8 +18,10 @@ import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,9 +31,12 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     TextView tv_notice;
     EditText et_content;
-    EditText et_interval;
     private Spinner spinnertext;
     ListView lv_reply;
     LocalReplyAdapter adapter;
@@ -79,6 +83,23 @@ public class MainActivity extends AppCompatActivity {
     TextView tv;
     //状态栏高度.
     int statusBarHeight = -1;
+
+
+    ListView lv_reply_1;
+    LocalReplyAdapter adapter_1;
+    List<LocalReplyBean> dataList_1 = new ArrayList<>();
+
+
+    ListView lv_reply_2;
+    LocalReplyAdapter adapter_2;
+    List<LocalReplyBean> dataList_2 = new ArrayList<>();
+
+    TextView console;
+    MyReceiver myReceiver;
+
+    LinearLayout ll_list;
+    ScrollView scrollview;
+    Button btn_check_situation;
 
     public static final String ACTION_XTELE_COLLECT_RESULT = "ACTION_XTELE_COLLECT_RESULT";
 
@@ -104,9 +125,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         tv_notice = findViewById(R.id.tv_notice);
         et_content = findViewById(R.id.et_content);
-        et_interval = findViewById(R.id.et_interval);
         lv_reply = findViewById(R.id.lv_reply);
+        ll_list = findViewById(R.id.ll_list);
+        scrollview = findViewById(R.id.scrollview);
         spinnertext = (Spinner) findViewById(R.id.spinner1);
+
         TextView tv_title = findViewById(R.id.tv_title);
         String account = WriteFileUtil.read(Global.ACCOUNT);
         tv_title.setText(account);
@@ -128,10 +151,28 @@ public class MainActivity extends AppCompatActivity {
 //        LoggerUtil.logI(TAG, "hasChinese   259--->"+hasChinese);
 
 
-        String read = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
-        et_interval.setText(read);
         String read2 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
         et_content.setText(read2);
+        EditText et_switch_num = findViewById(R.id.et_switch_num);
+        et_switch_num.setText(WriteFileUtil.read(Global.SWITCH_NUM));
+        et_switch_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "SWITCH_NUM  179--->" + trim);
+                WriteFileUtil.write(trim, Global.SWITCH_NUM);
+            }
+        });
 
         Button btn_import_book = findViewById(R.id.btn_import_book);
         btn_import_book.setOnClickListener(new View.OnClickListener() {
@@ -142,91 +183,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btn_check_situation = findViewById(R.id.btn_check_situation);
+        btn_check_situation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btn_check_situation.getText().toString().equals("查看打招呼发送情况")){
+                    ll_list.setVisibility(View.GONE);
+                    scrollview.setVisibility(View.VISIBLE);
+                    btn_check_situation.setText("查看打招呼列表");
+                }else{
+                    ll_list.setVisibility(View.VISIBLE);
+                    scrollview.setVisibility(View.GONE);
+                    btn_check_situation.setText("查看打招呼发送情况");
+                }
+
+            }
+        });
+
         Button btn_dazhaohu = findViewById(R.id.btn_dazhaohu);
         btn_dazhaohu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SayHiActivity.class));
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
 
             }
         });
 
-//        ExecutorUtil.doExecute(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (isLoop) {
-//                    return;
-//                }
-//                isLoop = true;
-//
-//                while (true) {
-//                    try {
-////                        SystemClock.sleep(10000);
-//                        long stop_caiji = 0;
-//                        try {
-//                            stop_caiji = Long.parseLong(WriteFileUtil.read(Global.IS_STOP_CAIJI));
-//                        } catch (Exception e) {
-//
-//                        }
-//                        long l = System.currentTimeMillis() - stop_caiji;
-//                        String is_start_caiji = WriteFileUtil.read(Global.IS_START_CAIJI);
-//                        if (is_start_caiji.equals("1")) {
-//                            if (l > 1000 * 60 * 5) {//可改成五分钟
-//                                LoggerUtil.logI(TAG, "过五分钟了   107--->" + stop_caiji + "---->" + l + "----->" + is_start_caiji);
-//                                Intent intent = new Intent();
-//                                intent.setAction(HookMain.ACTION_XTELE_GROUP);
-//                                intent.putExtra("isStop", 3);
-//                                sendBroadcast(intent);
-////                                SystemClock.sleep(8000);
-////                                Intent redIntent = new Intent();
-////                                redIntent.setClassName("org.telegram.messenger", "org.telegram.ui.LaunchActivity");
-////                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////                                startActivity(redIntent);
-//                            }
-//
-//                        }
-//
-//
-//                        LoggerUtil.logI(TAG, "stop_caiji   89--->" + stop_caiji + "---->" + l + "----->" + is_start_caiji);
-//                    } catch (Exception e) {
-//                        LoggerUtil.logI(TAG, "eee   126--->" + CrashHandler.getInstance().printCrash(e));
-//                    }
-//
-//                    SystemClock.sleep(1000 * 60);//可改成一分钟
-//                }
-//
-//
-//            }
-//        });
-
-        Button btnText = findViewById(R.id.btn_text);
-        btnText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                String s = Mp3ToOggAction.mp3ToOgg("/sdcard/1aweme/test.mp3");
-//
-//                LoggerUtil.logI(TAG, "sss   94--->"+s);
-
-                String interval = et_interval.getText().toString().trim();
-                if (TextUtils.isEmpty(interval)) {
-                    Toast.makeText(MainActivity.this, "请输入每批消息之间的时间间隔！", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String content = et_content.getText().toString().trim();
-                if (TextUtils.isEmpty(content)) {
-                    Toast.makeText(MainActivity.this, "请输入转发时好友之间的时间间隔", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                WriteFileUtil.write(interval, Global.INTERVAL_MESSAGES);
-                WriteFileUtil.write(content, Global.INTERVAL_FRIENDS);
-
-                Intent intent = new Intent();
-                intent.putExtra("content", content);
-                intent.putExtra("interval", interval);
-                intent.setAction(HookMain.ACTION_XTELE_CONTACTS_BOOK_TRAN);
-                sendBroadcast(intent);
-            }
-        });
 
         Button btn_local_start = findViewById(R.id.btn_local_start);
         btn_local_start.setOnClickListener(new View.OnClickListener() {
@@ -254,6 +236,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initSayHiSettings();
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter0 = new IntentFilter();
+        intentFilter0.addAction(Global.ACTION_APP_LOG_7);
+        registerReceiver(myReceiver, intentFilter0);
+        console = findViewById(R.id.console);
+        String str = LoggerUtil.read100Line(Global.STORAGE_APP_LOG_7);
+        console.setText(str);
         Button btn_black = findViewById(R.id.btn_black);
         btn_black.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,13 +322,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn_group = findViewById(R.id.btn_group);
-        btn_group.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, GroupActivity.class));
-            }
-        });
 
         Button btn_rebot = findViewById(R.id.btn_rebot);
         btn_rebot.setOnClickListener(new View.OnClickListener() {
@@ -372,6 +355,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, ShowLogActivity.class));
+            }
+        });
+        Button btn_other = findViewById(R.id.btn_other);
+        btn_other.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Main2Activity.class));
             }
         });
 
@@ -624,6 +614,407 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void initSayHiSettings() {
+
+        lv_reply_1 = findViewById(R.id.lv_reply_1);
+        Button btn_local_set_1 = findViewById(R.id.btn_local_set_1);
+        btn_local_set_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LFilePicker()
+                        .withActivity(MainActivity.this)
+                        .withRequestCode(1025)
+                        .withStartPath(Environment.getExternalStorageDirectory().getPath())//指定初始显示路径
+                        .withMutilyMode(false)
+                        .start();
+            }
+        });
+
+        adapter_1 = new LocalReplyAdapter(this, dataList_1, R.layout.item_local_reply);
+        lv_reply_1.setAdapter(adapter_1);
+        try {
+            String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+            JSONArray jsonArray = new JSONArray(replyJson);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = new JSONObject(jsonArray.getString(i));
+                String content = jsonObject.getString("content");
+                String delay = jsonObject.getString("time");
+                LocalReplyBean localReplyBean = new LocalReplyBean(content, delay);
+                dataList_1.add(localReplyBean);
+            }
+            adapter_1.setDatas(dataList_1);
+        } catch (Exception e) {
+            for (int i = 0; i < 20; i++) {
+                LocalReplyBean localReplyBean = new LocalReplyBean("", "");
+                dataList_1.add(localReplyBean);
+            }
+            adapter_1.setDatas(dataList_1);
+        }
+        lv_reply_1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("请选择第" + (position + 1) + "条的类型");
+                String[] types = {"文字", "语音", "图片", "gif", "弹语音", "收藏", "视频"};
+                builder.setItems(types, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条文字内容")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean(input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 1) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条语音的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("语音:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 2) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条图片的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("图片:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 3) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条gif的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("gif:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 4) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条弹语音的延迟时间(秒)")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("弹语音:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 5) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入收藏夹从下往上数第几条")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("收藏:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 6) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条视频的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_1.set(position, new LocalReplyBean("视频:" + input, dataList_1.get(position).getTime()));
+                                            adapter_1.setDatas(dataList_1);
+                                            saveReply_1();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        }
+                    }
+                });
+                builder.show();
+
+            }
+        });
+        Button btn_clear_dazhaohu_1 = findViewById(R.id.btn_clear_dazhaohu_1);
+        btn_clear_dazhaohu_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("确定清除打招呼设置吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LoggerUtil.logI(TAG, "确定清除打招呼设置吗   235--->");
+                                dataList_1.clear();
+                                for (int i = 0; i < 20; i++) {
+                                    LocalReplyBean localReplyBean = new LocalReplyBean("", "");
+                                    dataList_1.add(localReplyBean);
+                                }
+                                adapter_1.setDatas(dataList_1);
+                                saveReply_1();
+                                Toast.makeText(MainActivity.this, "清除成功！", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("取消", null);
+                builder.show();
+            }
+        });
+
+
+        CheckBox cb_only_unread = findViewById(R.id.cb_only_unread);
+        String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
+        LoggerUtil.logI(TAG, "is_only_unread   230--->" + is_only_unread);
+        if (TextUtils.isEmpty(is_only_unread)) {
+            cb_only_unread.setChecked(true);
+        }
+        if (is_only_unread.equals("true")) {
+            cb_only_unread.setChecked(true);
+        } else {
+            cb_only_unread.setChecked(false);
+            WriteFileUtil.write("false", Global.IS_ONLY_UNREAD);
+        }
+        cb_only_unread.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                LoggerUtil.logI(TAG, "IS_ONLY_UNREAD   243--->" + b);
+                WriteFileUtil.write(b + "", Global.IS_ONLY_UNREAD);
+            }
+        });
+        EditText et_interval = findViewById(R.id.et_interval);
+        et_interval.setText(WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL));
+        et_interval.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "SAY_HI_ROUND_INTERVAL  263--->" + trim);
+                WriteFileUtil.write(trim, Global.SAY_HI_ROUND_INTERVAL);
+            }
+        });
+        lv_reply_2 = findViewById(R.id.lv_reply_2);
+        Button btn_local_set_2 = findViewById(R.id.btn_local_set_2);
+        btn_local_set_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LFilePicker()
+                        .withActivity(MainActivity.this)
+                        .withRequestCode(1026)
+                        .withStartPath(Environment.getExternalStorageDirectory().getPath())//指定初始显示路径
+                        .withMutilyMode(false)
+                        .start();
+            }
+        });
+
+        adapter_2 = new LocalReplyAdapter(this, dataList_2, R.layout.item_local_reply);
+        lv_reply_2.setAdapter(adapter_2);
+        try {
+            String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON_2);
+            JSONArray jsonArray = new JSONArray(replyJson);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = new JSONObject(jsonArray.getString(i));
+                String content = jsonObject.getString("content");
+                String delay = jsonObject.getString("time");
+                LocalReplyBean localReplyBean = new LocalReplyBean(content, delay);
+                dataList_2.add(localReplyBean);
+            }
+            adapter_2.setDatas(dataList_2);
+        } catch (Exception e) {
+            for (int i = 0; i < 20; i++) {
+                LocalReplyBean localReplyBean = new LocalReplyBean("", "");
+                dataList_2.add(localReplyBean);
+            }
+            adapter_2.setDatas(dataList_2);
+        }
+        lv_reply_2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("请选择第" + (position + 1) + "条的类型");
+                String[] types = {"文字", "语音", "图片", "gif", "弹语音", "收藏", "视频"};
+                builder.setItems(types, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条文字内容")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean(input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 1) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条语音的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("语音:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 2) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条图片的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("图片:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 3) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条gif的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("gif:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 4) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条弹语音的延迟时间(秒)")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("弹语音:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 5) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入收藏夹从下往上数第几条")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("收藏:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        } else if (which == 6) {
+                            final EditText et = new EditText(MainActivity.this);
+                            new AlertDialog.Builder(MainActivity.this).setTitle("输入第" + (position + 1) + "条视频的本地路径")
+                                    .setView(et)
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String input = et.getText().toString();
+                                            dataList_2.set(position, new LocalReplyBean("视频:" + input, dataList_2.get(position).getTime()));
+                                            adapter_2.setDatas(dataList_2);
+                                            saveReply_2();
+                                        }
+                                    }).setNegativeButton("取消", null)
+                                    .show();
+                        }
+                    }
+                });
+                builder.show();
+
+            }
+        });
+        Button btn_clear_dazhaohu_2 = findViewById(R.id.btn_clear_dazhaohu_2);
+        btn_clear_dazhaohu_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("确定清除打招呼设置吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                LoggerUtil.logI(TAG, "确定清除打招呼设置吗   424--->");
+                                dataList_2.clear();
+                                for (int i = 0; i < 20; i++) {
+                                    LocalReplyBean localReplyBean = new LocalReplyBean("", "");
+                                    dataList_2.add(localReplyBean);
+                                }
+                                adapter_2.setDatas(dataList_2);
+                                saveReply_2();
+                                Toast.makeText(MainActivity.this, "清除成功！", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("取消", null);
+                builder.show();
+            }
+        });
+    }
+
+    private void saveReply_1() {
+        String s = JsonTool.paraseJson(dataList_1);
+        LoggerUtil.logI(TAG, "sss  216---->" + s);
+        WriteFileUtil.write(s, Global.STORAGE_LOCAL_REPLY_JSON);
+    }
+
+    private void saveReply_2() {
+        String s = JsonTool.paraseJson(dataList_2);
+        LoggerUtil.logI(TAG, "sss  450---->" + s);
+        WriteFileUtil.write(s, Global.STORAGE_LOCAL_REPLY_JSON_2);
+    }
+
     private void setSpinner() {
         list.add("图片");
         list.add("语音");
@@ -708,13 +1099,43 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (resultCode == RESULT_OK) {
-                if (requestCode == 1026) {
+                if (requestCode == 1024) {
                     List<String> list = data.getStringArrayListExtra("paths");
                     final String path = list.get(0);
-                    LoggerUtil.logI(TAG, "path  525---->" + path);
-                    WriteFileUtil.write(path, Global.BLACK_PATH);
+                    LoggerUtil.logI(TAG, "path  330---->" + path);
+                    List<String> stringList = WriteFileUtil.readFile(path);
+                    LoggerUtil.logI(TAG, "stringList  331---->" + stringList.size());
+                    if (stringList.size() == 0) {
+                        Toast.makeText(this, "文件为空！", Toast.LENGTH_SHORT).show();
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("导入成功，共" + stringList.size() + "个好友，确定开始转发吗？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LoggerUtil.logI(TAG, "确定开始转发吗   362--->");
+                                    String content = et_content.getText().toString().trim();
+                                    if (TextUtils.isEmpty(content)) {
+                                        Toast.makeText(MainActivity.this, "请输入转发时好友之间的时间间隔", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    WriteFileUtil.write(content, Global.INTERVAL_FRIENDS);
+
+                                    Intent intent = new Intent();
+//                                    intent.putExtra("content",content);
+//                                    intent.putExtra("interval",interval);
+                                    intent.putExtra("path", path);
+                                    intent.setAction(HookMain.ACTION_XTELE_LOCAL_TRAN);
+                                    sendBroadcast(intent);
+                                }
+                            })
+                            .setNegativeButton("取消", null);
+                    builder.show();
+
 
                 }
+
                 if (requestCode == 1025) {
                     List<String> list = data.getStringArrayListExtra("paths");
                     final String path = list.get(0);
@@ -744,76 +1165,90 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     txt = split[2];
                                 }
-                                dataList.set(i, new LocalReplyBean(txt, dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean(txt, dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("yuyin")) {
-                                dataList.set(i, new LocalReplyBean("语音:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("语音:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("tupian")) {
-                                dataList.set(i, new LocalReplyBean("图片:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("图片:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("gif")) {
-                                dataList.set(i, new LocalReplyBean("gif:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("gif:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("tanyuyin")) {
-                                dataList.set(i, new LocalReplyBean("弹语音:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("弹语音:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("shoucang")) {
-                                dataList.set(i, new LocalReplyBean("收藏:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("收藏:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             } else if (s1.equals("shipin")) {
-                                dataList.set(i, new LocalReplyBean("视频:" + split[2], dataList.get(i).getTime()));
-                                adapter.setDatas(dataList);
+                                dataList_1.set(i, new LocalReplyBean("视频:" + split[2], dataList_1.get(i).getTime()));
+                                adapter_1.setDatas(dataList_1);
                             }
                         } catch (Exception e) {
 
                         }
 
                     }
-                    saveReply();
-
-
+                    saveReply_1();
                 }
-
-                if (requestCode == 1024) {
+                if (requestCode == 1026) {
                     List<String> list = data.getStringArrayListExtra("paths");
                     final String path = list.get(0);
-                    LoggerUtil.logI(TAG, "path  330---->" + path);
+                    LoggerUtil.logI(TAG, "path  516---->" + path);
                     List<String> stringList = WriteFileUtil.readFile(path);
-                    LoggerUtil.logI(TAG, "stringList  331---->" + stringList.size());
+                    LoggerUtil.logI(TAG, "stringList  518---->" + stringList.size());
                     if (stringList.size() == 0) {
                         Toast.makeText(this, "文件为空！", Toast.LENGTH_SHORT).show();
                     }
+                    for (int i = 0; i < stringList.size(); i++) {
+                        try {
+                            String s = stringList.get(i);
+                            LoggerUtil.logI(TAG, "sss  525---->" + s);
+                            String[] split = s.split("-");
+                            String s1 = split[1];
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("导入成功，共" + stringList.size() + "个好友，确定开始转发吗？")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    LoggerUtil.logI(TAG, "确定开始转发吗   362--->");
-                                    String interval = et_interval.getText().toString().trim();
-                                    if (TextUtils.isEmpty(interval)) {
-                                        Toast.makeText(MainActivity.this, "请输入每批消息之间的时间间隔！", Toast.LENGTH_SHORT).show();
-                                        return;
+                            if (s1.equals("wenzi")) {
+                                String txt = "";
+                                if (split[2].contains("enter")) {
+                                    try {
+                                        String[] split1 = split[2].split("enter");
+                                        txt = split1[0] + "\n" + split1[1];
+                                        LoggerUtil.logI(TAG, "txt   535--->" + txt);
+                                    } catch (Exception e) {
+                                        txt = split[2];
                                     }
-                                    String content = et_content.getText().toString().trim();
-                                    if (TextUtils.isEmpty(content)) {
-                                        Toast.makeText(MainActivity.this, "请输入转发时好友之间的时间间隔", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-                                    WriteFileUtil.write(interval, Global.INTERVAL_MESSAGES);
-                                    WriteFileUtil.write(content, Global.INTERVAL_FRIENDS);
-
-                                    Intent intent = new Intent();
-//                                    intent.putExtra("content",content);
-//                                    intent.putExtra("interval",interval);
-                                    intent.putExtra("path", path);
-                                    intent.setAction(HookMain.ACTION_XTELE_LOCAL_TRAN);
-                                    sendBroadcast(intent);
+                                } else {
+                                    txt = split[2];
                                 }
-                            })
-                            .setNegativeButton("取消", null);
-                    builder.show();
+                                dataList_2.set(i, new LocalReplyBean(txt, dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("yuyin")) {
+                                dataList_2.set(i, new LocalReplyBean("语音:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("tupian")) {
+                                dataList_2.set(i, new LocalReplyBean("图片:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("gif")) {
+                                dataList_2.set(i, new LocalReplyBean("gif:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("tanyuyin")) {
+                                dataList_2.set(i, new LocalReplyBean("弹语音:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("shoucang")) {
+                                dataList_2.set(i, new LocalReplyBean("收藏:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            } else if (s1.equals("shipin")) {
+                                dataList_2.set(i, new LocalReplyBean("视频:" + split[2], dataList_2.get(i).getTime()));
+                                adapter_2.setDatas(dataList_2);
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                    }
+                    saveReply_2();
 
 
                 }
@@ -919,6 +1354,24 @@ public class MainActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             LoggerUtil.logI(TAG, "eee  877--->" + CrashHandler.getInstance().printCrash(e));
+        }
+    }
+
+    class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+//                LoggerUtil.logAll(TAG, "sss   243---->");
+                if (intent.getAction().equals(Global.ACTION_APP_LOG_7)) {
+
+                    String str = LoggerUtil.read100Line(Global.STORAGE_APP_LOG_7);
+//                    LoggerUtil.logAll(TAG, "sss   245---->" + str);
+                    console.setText(str);
+                }
+
+            } catch (Exception e) {
+            }
         }
     }
 

@@ -5,26 +5,21 @@ import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
 import com.jujing.telehook_2.hook.HookActivity;
-import com.jujing.telehook_2.model.SendMessage;
 import com.jujing.telehook_2.model.UsersAndChats;
 import com.jujing.telehook_2.util.CrashHandler;
-import com.jujing.telehook_2.util.HookUtil;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.RandomUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 import static com.jujing.telehook_2.HookMain.classLoader;
@@ -51,7 +46,7 @@ public class SearchContactAction {
             if (judgeSayHiContent1(replyJson)) {
                 return;
             }
-            SendVideoInitAction.initSayHiVideo(replyJson);
+            SendVideoInitAction.initSayHi(replyJson);
 
             UsersAndChats.sentNum = 0;
             firstIdList.clear();
@@ -114,7 +109,7 @@ public class SearchContactAction {
             if (judgeSayHiContent2(replyJson_2)) {
                 return;
             }
-            SendVideoInitAction.initSayHiVideo(replyJson_2);
+            SendVideoInitAction.initSayHi(replyJson_2);
             String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
             LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
             List<Long> readList = UserReadAction.checkReadNum();
@@ -457,28 +452,19 @@ public class SearchContactAction {
                     continue;
                 }
 
-                int interval_messages = 0;
-                String interval_messages0 = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
-                if (interval_messages0.contains("-")) {
-                    String[] split = interval_messages0.split("-");
-                    int start = Integer.parseInt(split[0]);
-                    int end = Integer.parseInt(split[1]);
-                    interval_messages = RandomUtil.randomNumber(start, end);
-                } else {
-                    interval_messages = Integer.parseInt(interval_messages0);
-                }
-
-                LoggerUtil.logI(TAG, "interval_messages 309 :" + interval_messages + "---->" + user_id);
-//                for (int k = 0; k < interval_messages; k++) {
-//                    if (!UsersAndChats.isStart) {
-//                        LoggerUtil.logI(TAG, "任务停止了 285 :" + interval_messages + "-----" + k+"---->"+user_id);
-//                        HookActivity.showToast("任务停止了！");
-//                        return;
-//                    }
-//                    SystemClock.sleep(1000);
+//                int interval_messages = 0;
+//                String interval_messages0 = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
+//                if (interval_messages0.contains("-")) {
+//                    String[] split = interval_messages0.split("-");
+//                    int start = Integer.parseInt(split[0]);
+//                    int end = Integer.parseInt(split[1]);
+//                    interval_messages = RandomUtil.randomNumber(start, end);
+//                } else {
+//                    interval_messages = Integer.parseInt(interval_messages0);
 //                }
-
-                SystemClock.sleep(interval_messages*1000);
+//
+//                LoggerUtil.logI(TAG, "interval_messages 309 :" + interval_messages + "---->" + user_id);
+//                SystemClock.sleep(interval_messages*1000);
 
 
             }

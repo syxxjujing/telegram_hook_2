@@ -1,6 +1,6 @@
 package com.jujing.telehook_2.bean;
 
-public class VideoMessageBean {
+public class SayHiMessageBean {
     public int date;
     public long mid;
 
@@ -22,7 +22,7 @@ public class VideoMessageBean {
 
     @Override
     public String toString() {
-        return "VideoMessageBean{" +
+        return "SayHiMessageBean{" +
                 "date=" + date +
                 ", mid=" + mid +
                 '}';

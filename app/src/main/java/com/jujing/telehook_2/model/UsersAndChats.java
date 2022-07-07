@@ -397,24 +397,35 @@ public class UsersAndChats {
                     LoggerUtil.sendLog7("发送失败，文件不存在！");
                     return true;
                 }
-                if (content.startsWith("语音")) {
-                    SendMessage.sendVoice(user_id, path);
-                } else if (content.startsWith("图片")) {
-                    SendMessage.sendImage(false, user_id, path);
-                } else if (content.startsWith("gif")) {
-                    SendMessage.sendGif(user_id, path);
-                } else if (content.startsWith("视频")) {
 
-                    String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
-                    LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
-                    if (TextUtils.isEmpty(mid)){
-                        LoggerUtil.sendLog7("收藏的视频不存在："+path);
-                        return true;
-                    }
-                    SendForwardAction.sendForwardMessagesByMid(user_id,mid);
 
-//                    SendMessage.sendVideo(false, user_id, path);
+                String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
+                LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
+                if (TextUtils.isEmpty(mid)){
+                    LoggerUtil.sendLog7("收藏的消息不存在："+path);
+                    return true;
                 }
+
+                SendForwardAction.sendForwardMessagesByMid(user_id,mid);
+                LoggerUtil.sendLog7("第"+(j+1)+"个收藏消息发送完毕："+content);
+//                if (content.startsWith("语音")) {
+//                    SendMessage.sendVoice(user_id, path);
+//                } else if (content.startsWith("图片")) {
+//                    SendMessage.sendImage(false, user_id, path);
+//                } else if (content.startsWith("gif")) {
+//                    SendMessage.sendGif(user_id, path);
+//                } else if (content.startsWith("视频")) {
+//
+//                    String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
+//                    LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
+//                    if (TextUtils.isEmpty(mid)){
+//                        LoggerUtil.sendLog7("收藏的视频不存在："+path);
+//                        return true;
+//                    }
+//                    SendForwardAction.sendForwardMessagesByMid(user_id,mid);
+//
+////                    SendMessage.sendVideo(false, user_id, path);
+//                }
 
             } else if (content.startsWith("弹语音")) {
                 String[] array = content.split(":");

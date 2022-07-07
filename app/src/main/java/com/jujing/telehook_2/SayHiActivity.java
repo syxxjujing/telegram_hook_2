@@ -19,8 +19,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jujing.telehook_2.bean.LocalReplyBean;
-import com.jujing.telehook_2.model.operate.SayHiSettingsActivity;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
@@ -33,15 +31,11 @@ public class SayHiActivity extends AppCompatActivity {
     TextView console;
     MyReceiver myReceiver;
     EditText et_content;
-    EditText et_interval;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_say_hi);
         et_content = findViewById(R.id.et_content);
-        et_interval = findViewById(R.id.et_interval);
-        String read = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
-        et_interval.setText(read);
         String read2 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
         et_content.setText(read2);
         
@@ -111,7 +105,26 @@ public class SayHiActivity extends AppCompatActivity {
             }
         });
 
+        EditText et_switch_num = findViewById(R.id.et_switch_num);
+        et_switch_num.setText(WriteFileUtil.read(Global.SWITCH_NUM));
+        et_switch_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "SWITCH_NUM  179--->" + trim);
+                WriteFileUtil.write(trim, Global.SWITCH_NUM);
+            }
+        });
       
     }
 
@@ -137,17 +150,11 @@ public class SayHiActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     LoggerUtil.logI(TAG, "确定开始转发吗   362--->");
-                                    String interval = et_interval.getText().toString().trim();
-                                    if (TextUtils.isEmpty(interval)) {
-                                        Toast.makeText(SayHiActivity.this, "请输入每批消息之间的时间间隔！", Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
                                     String content = et_content.getText().toString().trim();
                                     if (TextUtils.isEmpty(content)) {
                                         Toast.makeText(SayHiActivity.this, "请输入转发时好友之间的时间间隔", Toast.LENGTH_SHORT).show();
                                         return;
                                     }
-                                    WriteFileUtil.write(interval, Global.INTERVAL_MESSAGES);
                                     WriteFileUtil.write(content, Global.INTERVAL_FRIENDS);
 
                                     Intent intent = new Intent();
@@ -169,26 +176,7 @@ public class SayHiActivity extends AppCompatActivity {
             Toast.makeText(this, "有异常！", Toast.LENGTH_SHORT).show();
         }
 
-        EditText et_switch_num = findViewById(R.id.et_switch_num);
-        et_switch_num.setText(WriteFileUtil.read(Global.SWITCH_NUM));
-        et_switch_num.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String trim = s.toString().trim();
-                LoggerUtil.logI(TAG, "SWITCH_NUM  179--->" + trim);
-                WriteFileUtil.write(trim, Global.SWITCH_NUM);
-            }
-        });
 
     }
 

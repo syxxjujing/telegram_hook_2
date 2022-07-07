@@ -4,13 +4,11 @@ import static com.jujing.telehook_2.HookMain.classLoader;
 import static com.jujing.telehook_2.model.operate.Tools.getClientUserId;
 import static com.jujing.telehook_2.model.operate.Tools.getDatabase;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
-import com.jujing.telehook_2.bean.VideoMessageBean;
+import com.jujing.telehook_2.bean.SayHiMessageBean;
 import com.jujing.telehook_2.model.SendMessage;
 import com.jujing.telehook_2.model.UsersAndChats;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -30,7 +28,7 @@ public class SendVideoInitAction {
 
     private static final String TAG = "SendVideoInitAction";
 
-    public static void initSayHiVideo(String replyJson) {
+    public static void initSayHi(String replyJson) {
         try {
 
             LoggerUtil.logI(TAG, "replyJson 19 :" + replyJson);
@@ -39,39 +37,57 @@ public class SendVideoInitAction {
                 JSONObject jsonObject = new JSONObject(jsonArray.getString(j));
                 String content = jsonObject.getString("content");
                 LoggerUtil.logI(TAG, "content 24 :" + content + "-----" + j + "---->");
-                if (content.startsWith("视频")) {
+
+
+
+                if (content.startsWith("语音") || content.startsWith("图片")
+                        || content.startsWith("gif") || content.startsWith("视频")) {
+                    LoggerUtil.sendLog7("开始第" + (j + 1) + "个发送消息到收藏：" + content);
                     String[] array = content.split(":");
                     String path = array[1].trim();
                     if (TextUtils.isEmpty(path)) {
                         return;
                     }
-                    LoggerUtil.sendLog7("开始发送视频到收藏夹："+path);
                     boolean exists = new File(path).exists();
-                    LoggerUtil.logI(TAG, "path 32 :" + path + "-----" + j + "---->" + exists + "---->" + j + "---->" + content);
+                    LoggerUtil.logI(TAG, "path 86 :" + path + "-----" + j + "---->" + exists + "---->" + j + "---->" + content);
                     if (!exists) {
-                        LoggerUtil.sendLog7("视频发送收藏夹失败，文件不存在！");
+                        LoggerUtil.sendLog7("发送收藏夹失败，文件不存在！！");
                         return;
                     }
                     long curTime = System.currentTimeMillis() / 1000;
+                    if (content.startsWith("语音")) {
+                        SendMessage.sendVoice(getClientUserId(classLoader), path);
+//                        SendMessage.sendVoice(user_id, path);
+                    } else if (content.startsWith("图片")) {
+                        SendMessage.sendImage(false, getClientUserId(classLoader), path);
+//                        SendMessage.sendImage(false, user_id, path);
+                    } else if (content.startsWith("gif")) {
 
-                    SendMessage.sendVideo(false, getClientUserId(classLoader), path);
-                    for (int i = 0; i < 60; i++) {
-                        VideoMessageBean bean = queryMessages();
-                        LoggerUtil.logI(TAG, "bean  56---->" + bean + "---->" + i + "--->" + curTime);
-                        if (curTime < bean.getDate() && bean.getMid() != 0) {
+                        SendMessage.sendGif(getClientUserId(classLoader), path);
+                    } else if (content.startsWith("视频")) {
+
+                        SendMessage.sendVideo(false, getClientUserId(classLoader), path);
+//                    SendMessage.sendVideo(false, user_id, path);
+                    }
+
+                    for (int i = 0; i < 120; i++) {
+                        SayHiMessageBean bean = queryMessages();
+                        LoggerUtil.logI(TAG, "bean  74---->" + bean + "---->" + i + "--->" + curTime);
+                        if (curTime <= bean.getDate() && bean.getMid() != 0) {
                             break;
                         }
                         SystemClock.sleep(1000);
                     }
 
-                    VideoMessageBean bean = queryMessages();
+                    SayHiMessageBean bean = queryMessages();
                     LoggerUtil.logI(TAG, "bean  68---->" + bean + "---->" + j + "--->" + curTime);
-                    if (curTime < bean.date && bean.mid != 0) {
-                        WriteFileUtil.write(bean.getMid()+"", Global.SEND_VIDEO_MESSAGE+j);
-                        LoggerUtil.sendLog7("发送视频到收藏夹成功："+path);
-                    }else{
-                        LoggerUtil.sendLog7("发送视频到收藏夹超时："+path);
+                    if (curTime <= bean.date && bean.mid != 0) {
+                        WriteFileUtil.write(bean.getMid() + "", Global.SEND_VIDEO_MESSAGE + j);
+                        LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏成功：" + content);
+                    } else {
+                        LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏超时：" + content);
                     }
+
                 }
 
             }
@@ -82,8 +98,8 @@ public class SendVideoInitAction {
     }
 
 
-    public static VideoMessageBean queryMessages() {
-        VideoMessageBean bean = new VideoMessageBean();
+    public static SayHiMessageBean queryMessages() {
+        SayHiMessageBean bean = new SayHiMessageBean();
         try {
 
             //5319114872
@@ -302,10 +318,10 @@ public class SendVideoInitAction {
                 msgs.add(messageObject);
                 Object messageText = XposedHelpers.getObjectField(msgs.get(0), "messageText");
                 LoggerUtil.logI(TAG, "messageText  247---->" + messageText + "--->" + fullMid);
-                if (messageText.toString().equals("Video")) {
-                    bean.setMid(fullMid);
-                    bean.setDate(date);
-                }
+//                if (messageText.toString().equals("Video")) {
+                bean.setMid(fullMid);
+                bean.setDate(date);
+//                }
 
                 hasNext = (boolean) XposedHelpers.callMethod(cursor, "next");
             }

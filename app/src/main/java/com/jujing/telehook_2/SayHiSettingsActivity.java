@@ -1,4 +1,4 @@
-package com.jujing.telehook_2.model.operate;
+package com.jujing.telehook_2;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,8 +19,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jujing.telehook_2.Global;
-import com.jujing.telehook_2.R;
 import com.jujing.telehook_2.adapter.LocalReplyAdapter;
 import com.jujing.telehook_2.bean.LocalReplyBean;
 import com.jujing.telehook_2.util.CrashHandler;
