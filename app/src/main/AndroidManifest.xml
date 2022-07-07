@@ -66,6 +66,7 @@
         <activity android:name=".SayHiActivity" />
         <activity android:name=".SayHiFirstActivity" />
         <activity android:name=".SayHiSecondActivity" />
+        <activity android:name=".model.operate.SayHiSettingsActivity" />
     </application>
 
 </manifest>

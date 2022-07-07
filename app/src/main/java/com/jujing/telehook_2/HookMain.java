@@ -157,7 +157,7 @@ public class HookMain implements IXposedHookLoadPackage {
         AddAndInviteGroupAction.hook();
         CrashReport.initCrashReport(context, "9e15f1224f", true);
 
-//        SwitchAccountAction.hook();
+        SwitchAccountAction.hook();
 
 //        HookRequest.hook();
 
@@ -451,7 +451,7 @@ public class HookMain implements IXposedHookLoadPackage {
 //                        UsersAndChats.getChatsInfos();
                         String path = intent.getStringExtra("path");
 
-                        LoggerUtil.logI(TAG, "path  258----------" + path);
+                        LoggerUtil.logI(TAG, "path  454----------" + path);
                         SearchContactAction.handle(path);
                     }
                 }).start();

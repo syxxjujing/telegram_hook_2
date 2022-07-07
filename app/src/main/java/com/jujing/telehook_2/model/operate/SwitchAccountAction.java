@@ -32,7 +32,7 @@ public class SwitchAccountAction {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 String s = HookUtil.printParams(param);
-                LoggerUtil.logI(TAG, "sss 23---->" + s);
+                LoggerUtil.logI(TAG, "sss 35---->" + s);
 //                sss 23---->1,true,
 //                        sss 23---->0,true,
             }

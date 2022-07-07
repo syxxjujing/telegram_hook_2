@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jujing.telehook_2.bean.LocalReplyBean;
+import com.jujing.telehook_2.model.operate.SayHiSettingsActivity;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
@@ -57,6 +58,14 @@ public class SayHiActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(SayHiActivity.this, SayHiSecondActivity.class));
+            }
+        });
+
+        Button btn_settings = findViewById(R.id.btn_settings);
+        btn_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SayHiActivity.this, SayHiSettingsActivity.class));
             }
         });
         myReceiver = new MyReceiver();

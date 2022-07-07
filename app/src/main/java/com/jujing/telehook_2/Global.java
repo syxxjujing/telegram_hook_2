@@ -3,7 +3,7 @@ package com.jujing.telehook_2;
 import android.os.Environment;
 
 public class Global {
-    public static final String XPOSED_CODE = "132";//TODO 测试  记得改isDebug！！！
+    public static final String XPOSED_CODE = "136";//TODO 测试  记得改isDebug！！！
     public static boolean IS_USE = false;//TODO 测试  false 是 nkt  记得改appName   nkt是疯狂
     public static boolean IS_DEBUG = false;//TODO 测试
     public static boolean IS_DEBUG_STNLOGIC = false;//TODO 测试
@@ -182,6 +182,8 @@ public class Global {
     public static final String IS_ONLY_UNREAD = storage + "/is_only_unread";
     public static final String SAY_HI_ROUND_INTERVAL = storage + "/say_hi_round_interval";
     public static final String SWITCH_NUM = storage + "/switch_num";
+
+    public static final String SEND_VIDEO_MESSAGE = storage + "/send_video_message/";
 
 
 

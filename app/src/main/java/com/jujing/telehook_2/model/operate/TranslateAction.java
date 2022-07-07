@@ -7,6 +7,7 @@ import com.jujing.telehook_2.Global;
 import com.jujing.telehook_2.HttpApi;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.LoggerUtil;
+import com.jujing.telehook_2.util.MatchUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
@@ -166,17 +167,18 @@ public class TranslateAction {
             WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
             return "error";
         }
-
-        String[] s = text.split(" ");
-        if (s.length < 3) {//小于3个单词的不要检测
-            LoggerUtil.logI(TAG + talker_id, "小于三个单词--->" + text);
-            WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
-            return "error";
+        if (!MatchUtil.hasChinese(text)) {//是中文的不判断
+            String[] s = text.split(" ");
+            if (s.length < 3) {//小于3个单词的不要检测
+                LoggerUtil.logI(TAG + talker_id, "小于三个单词  173--->" + text);
+                WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);
+                return "error";
+            }
         }
 
         String c = text.toLowerCase();
         if (c.contains("okk")) {
-            LoggerUtil.logI(TAG + talker_id, "c 172: " + c);
+            LoggerUtil.logI(TAG + talker_id, "c 181: " + c);
             String c1 = c.replace(".", "");
             if (c1.equals("okk")) {
                 WriteFileUtil.write("error", Global.LANG_JUDGE + talker_id);

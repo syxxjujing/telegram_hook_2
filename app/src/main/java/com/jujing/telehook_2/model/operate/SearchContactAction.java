@@ -51,6 +51,8 @@ public class SearchContactAction {
             if (judgeSayHiContent1(replyJson)) {
                 return;
             }
+            SendVideoInitAction.initSayHiVideo(replyJson);
+
             UsersAndChats.sentNum = 0;
             firstIdList.clear();
             for (int i = 0; i < stringList.size(); i++) {
@@ -99,6 +101,7 @@ public class SearchContactAction {
 
             }
             String say_hi_round_interval0 = WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL);
+            LoggerUtil.logI(TAG, "say_hi_round_interval0 102 :" + say_hi_round_interval0);
             int say_hi_round_interval = timeFormat(say_hi_round_interval0);
             LoggerUtil.sendLog7("第一轮结束，间隔" + say_hi_round_interval + "秒后，开始第二轮");
             LoggerUtil.logI(TAG, "say_hi_round_interval 106 :" + say_hi_round_interval);
@@ -110,10 +113,11 @@ public class SearchContactAction {
             if (judgeSayHiContent2(replyJson_2)) {
                 return;
             }
+            SendVideoInitAction.initSayHiVideo(replyJson_2);
             String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
             LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
             List<Long> readList = UserReadAction.checkReadNum();
-            LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread+"---->"+readList.size());
+            LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread + "---->" + readList.size());
             LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
             UsersAndChats.sentNum = 0;
             for (int i = 0; i < firstIdList.size(); i++) {
@@ -163,6 +167,7 @@ public class SearchContactAction {
         }
         return interval_friends;
     }
+
 
     private static boolean judgeSayHiContent1(String replyJson) {
         try {

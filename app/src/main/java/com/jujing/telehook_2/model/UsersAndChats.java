@@ -40,7 +40,7 @@ public class UsersAndChats {
 
     public static Object getUser(long from_id) {
         Class<?> MessagesStorage = XposedHelpers.findClass("org.telegram.messenger.MessagesStorage", classLoader);
-        Object getInstance = XposedHelpers.callStaticMethod(MessagesStorage, "getInstance", 0);
+        Object getInstance = XposedHelpers.callStaticMethod(MessagesStorage, "getInstance", UsersAndChats.getCurrentUserId(classLoader));
         return XposedHelpers.callMethod(getInstance, "getUser", from_id);
     }
 
@@ -404,7 +404,12 @@ public class UsersAndChats {
                 } else if (content.startsWith("gif")) {
                     SendMessage.sendGif(user_id, path);
                 } else if (content.startsWith("视频")) {
-                    SendMessage.sendVideo(false, user_id, path);
+
+                    String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
+                    LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
+                    SendForwardAction.sendForwardMessagesByMid(user_id,mid);
+
+//                    SendMessage.sendVideo(false, user_id, path);
                 }
 
             } else if (content.startsWith("弹语音")) {

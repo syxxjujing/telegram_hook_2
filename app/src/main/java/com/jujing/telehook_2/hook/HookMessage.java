@@ -1,6 +1,7 @@
 package com.jujing.telehook_2.hook;
 
 import static com.jujing.telehook_2.HookMain.classLoader;
+import static com.jujing.telehook_2.model.operate.Tools.getClientUserId;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -18,6 +19,8 @@ import com.jujing.telehook_2.model.operate.JoinToGroupAction;
 import com.jujing.telehook_2.model.operate.JudgeCountryAndLangAction;
 import com.jujing.telehook_2.model.operate.LoadFullUser;
 import com.jujing.telehook_2.model.operate.SearchContactAction;
+import com.jujing.telehook_2.model.operate.SendForwardAction;
+import com.jujing.telehook_2.model.operate.SendVideoInitAction;
 import com.jujing.telehook_2.model.operate.SetAdminAction;
 import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.TranslateAction;
@@ -194,11 +197,11 @@ public class HookMessage {
                                 final long from_id = XposedHelpers.getLongField(from_id_obj, "user_id");
                                 LoggerUtil.logI(TAG, "from_id  78--->" + from_id + "---->" + dialog_id);
                                 try {
-                                    Object user = UsersAndChats.getUser(from_id);
+                                    Object user = UsersAndChats.getUser(dialog_id);
                                     Object username = XposedHelpers.getObjectField(user, "username");
                                     Object phone = XposedHelpers.getObjectField(user, "phone");
                                     Object first_name = XposedHelpers.getObjectField(user, "first_name");
-                                    LoggerUtil.logI(TAG, "user_id  125:" + from_id + "---->" + username + "---->" + phone + "---->" + first_name);
+                                    LoggerUtil.logI(TAG, "user_id  125:" + dialog_id+"---->"+from_id + "---->" + username + "---->" + phone + "---->" + first_name);
                                 } catch (Exception e) {
                                     LoggerUtil.logI(TAG, "ee  128--->" + CrashHandler.getInstance().printCrash(e));
                                 }
@@ -393,15 +396,28 @@ public class HookMessage {
 //                                        VoiceCallAction.startCall(939531867, "2");
 
 //                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
-                                        SwitchAccountAction.handle();
+//                                        SwitchAccountAction.handle();
+                                        SendForwardAction.sendForwardMessages(dialog_id,1);
                                     }
                                     if (message.toString().contains("jujing997")){
-                                        Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
-                                        int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
-                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
+//                                        Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
+//                                        int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
+//                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
+
+//                                        SendMessage.sendVideo(false, getClientUserId(classLoader),"/sdcard/1atest/1.mp4");
+                                        String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 2);
+                                        LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 2 );
+                                        SendForwardAction.sendForwardMessagesByMid(dialog_id,mid);
                                     }
                                     if (message.toString().contains("jujing996")){
-                                        SendMessage.sendText(false,939531867,"hihihi");
+//                                        SendMessage.sendText(false,939531867,"hihihi");
+                                        ExecutorUtil.doExecute(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+                                                SendVideoInitAction.initSayHiVideo(replyJson);
+                                            }
+                                        });
                                     }
 
 //                                    boolean isCountry = false;
@@ -672,6 +688,11 @@ public class HookMessage {
             if (is_open_check_reply.equals("false")) {
                 return;
             }
+
+            Object currentUser = UsersAndChats.getCurrentUser();
+//                HookUtil.printAllFieldForSuperclass(currentUser);
+            long id = XposedHelpers.getLongField(currentUser, "id");
+            LoggerUtil.logI(TAG + talker_id, "id  679 :" + id);
 
             if (msg_type.equals("text")) {//文字
                 LoggerUtil.logI(TAG + talker_id, "要回复文字了  687--->" + msgObj + "------------------->" + talker_id + "---->" + key_word_reply + "---->" + need_translate);
