@@ -54,8 +54,8 @@ public class SendVideoInitAction {
                     }
                     long curTime = System.currentTimeMillis() / 1000;
 
-                    SendMessage.sendVideo(false, getClientUserId(classLoader), "/sdcard/1atest/1.mp4");
-                    for (int i = 0; i < 30; i++) {
+                    SendMessage.sendVideo(false, getClientUserId(classLoader), path);
+                    for (int i = 0; i < 60; i++) {
                         VideoMessageBean bean = queryMessages();
                         LoggerUtil.logI(TAG, "bean  56---->" + bean + "---->" + i + "--->" + curTime);
                         if (curTime < bean.getDate() && bean.getMid() != 0) {

@@ -95,6 +95,7 @@ public class SearchContactAction {
                 int interval_friends = timeFormat(interval_friends0);
 
                 LoggerUtil.logI(TAG, "interval_friends 97 :" + interval_friends);
+//                SystemClock.sleep(interval_friends);
                 if (sleepTime(interval_friends)) {
                     return;
                 }
@@ -477,7 +478,7 @@ public class SearchContactAction {
 //                    SystemClock.sleep(1000);
 //                }
 
-                SystemClock.sleep(interval_messages * 1000L);
+                SystemClock.sleep(interval_messages*1000);
 
 
             }

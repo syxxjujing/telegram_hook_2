@@ -405,9 +405,12 @@ public class HookMessage {
 //                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
 
 //                                        SendMessage.sendVideo(false, getClientUserId(classLoader),"/sdcard/1atest/1.mp4");
-                                        String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 2);
-                                        LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 2 );
-                                        SendForwardAction.sendForwardMessagesByMid(dialog_id,mid);
+                                        for (int i = 0; i < 10; i++) {
+                                            String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 2);
+                                            LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 2 );
+                                            SendForwardAction.sendForwardMessagesByMid(dialog_id,mid);
+                                        }
+
                                     }
                                     if (message.toString().contains("jujing996")){
 //                                        SendMessage.sendText(false,939531867,"hihihi");

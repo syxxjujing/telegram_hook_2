@@ -407,6 +407,10 @@ public class UsersAndChats {
 
                     String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
                     LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
+                    if (TextUtils.isEmpty(mid)){
+                        LoggerUtil.sendLog7("收藏的视频不存在："+path);
+                        return true;
+                    }
                     SendForwardAction.sendForwardMessagesByMid(user_id,mid);
 
 //                    SendMessage.sendVideo(false, user_id, path);

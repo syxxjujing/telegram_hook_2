@@ -110,20 +110,22 @@ public class SendMessage {
         }
 
     }
-    public  static void markDialogAsRead(long from_id){
+
+    public static void markDialogAsRead(long from_id) {
 //        TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(939531867);
 //        getMessagesController().markDialogAsRead(939531867, dialog.top_message, dialog.top_message, dialog.last_message_date, false, 0, 0, true, 0);
 
-        Object aaa=getAccountInstance(classLoader);
-        Object messagesController=XposedHelpers.callMethod(aaa,"getMessagesController");
+        Object aaa = getAccountInstance(classLoader);
+        Object messagesController = XposedHelpers.callMethod(aaa, "getMessagesController");
         Object dialogs_dict = XposedHelpers.getObjectField(messagesController, "dialogs_dict");
         Object dialog = XposedHelpers.callMethod(dialogs_dict, "get", from_id);
-        XposedHelpers.callMethod(messagesController,"markDialogAsRead",from_id
-                ,XposedHelpers.getIntField(dialog,"top_message"),XposedHelpers.getIntField(dialog,"top_message")
-                ,XposedHelpers.getIntField(dialog,"last_message_date"),false,0,0,true,0);
+        XposedHelpers.callMethod(messagesController, "markDialogAsRead", from_id
+                , XposedHelpers.getIntField(dialog, "top_message"), XposedHelpers.getIntField(dialog, "top_message")
+                , XposedHelpers.getIntField(dialog, "last_message_date"), false, 0, 0, true, 0);
 
 
     }
+
     /**
      * @param isChat 如果是群就传true
      */
@@ -194,7 +196,7 @@ public class SendMessage {
     public static void sendVideo(final boolean isChat, final long id, final String path) {
 
         try {
-            LoggerUtil.logI(TAG, "sendVideo  197 ---->" + id + "---->" + path+"---->"+new File(path).exists());
+            LoggerUtil.logI(TAG, "sendVideo  197 ---->" + id + "---->" + path + "---->" + new File(path).exists());
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -217,12 +219,18 @@ public class SendMessage {
                     }
 
                     Object TL_photo = XposedHelpers.callMethod(getInstance, "generatePhotoSizes", screenshotPath, null);
-                    List sizes = (List) XposedHelpers.getObjectField(TL_photo, "sizes");
-                    LoggerUtil.logI(TAG, "sizes  166--->" + sizes);
+                    LoggerUtil.logI(TAG, "TL_photo 220--->" + TL_photo);
+                    if (TL_photo != null) {
+                        List sizes = (List) XposedHelpers.getObjectField(TL_photo, "sizes");
+                        LoggerUtil.logI(TAG, "sizes  223--->" + sizes);
 
 //                    Class<?> TLRPC$TL_photoSizeEmpty = XposedHelpers.findClass("org.telegram.tgnet.TLRPC$TL_photoSizeEmpty", classLoader);
 //                    Object photoSizeEmpty = XposedHelpers.newInstance(TLRPC$TL_photoSizeEmpty);
-                    XposedHelpers.setObjectField(tl_document, "thumbs", sizes);
+                        XposedHelpers.setObjectField(tl_document, "thumbs", sizes);
+                    } else {
+                        LoggerUtil.logI(TAG, "TL_photo 是空的 231--->null");
+                    }
+
 
                     XposedHelpers.setObjectField(tl_document, "mime_type", "video/mp4");
                     List list = new ArrayList();
@@ -260,7 +268,7 @@ public class SendMessage {
                                 , id, null, null, "", null, null, params, false, 0, 0, null, null);
                     }
 
-                    LoggerUtil.logI(TAG, "sendVideo  end 263 ---->" + id + "---->" + path+"---->"+new File(path).exists());
+                    LoggerUtil.logI(TAG, "sendVideo  end 263 ---->" + id + "---->" + path + "---->" + new File(path).exists());
 
                 }
             };
@@ -356,7 +364,7 @@ public class SendMessage {
     public static void sendVoice(final long id, final String path) {
 
         try {
-            LoggerUtil.logI(TAG, "sendVoice  99 ---->" + id + "---->" + path+"---->"+new File(path).exists());
+            LoggerUtil.logI(TAG, "sendVoice  99 ---->" + id + "---->" + path + "---->" + new File(path).exists());
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -416,7 +424,7 @@ public class SendMessage {
                     XposedHelpers.callMethod(getInstance, "sendMessage", tl_document, null, path
                             , id, null, null, "", null, null, params, false, 0, 0, null, null);
 
-                    LoggerUtil.logI(TAG, "sendVoice  end 417 ---->" + id + "---->" + path+"---->"+new File(path).exists());
+                    LoggerUtil.logI(TAG, "sendVoice  end 417 ---->" + id + "---->" + path + "---->" + new File(path).exists());
                 }
             };
             LoggerUtil.logI(TAG, "HookActivity.baseActivity  101---->" + HookActivity.baseActivity + "------");

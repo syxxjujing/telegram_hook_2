@@ -6,8 +6,7 @@ android {
         applicationId "com.jujing.telehook_2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0.136"
+        versionCode 1versionName "1.0.139"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     //签名配置

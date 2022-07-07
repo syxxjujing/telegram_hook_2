@@ -13,7 +13,7 @@
             android:id="@+id/et_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="请输入转发时好友之间的时间间隔"
+            android:hint="请输入转发时好友之间的时间间隔，单位秒"
             android:theme="@style/MyEditText" />
 
     </android.support.design.widget.TextInputLayout>
