@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import de.robv.android.xposed.XposedHelpers;
@@ -28,16 +29,17 @@ public class SendVideoInitAction {
 
     private static final String TAG = "SendVideoInitAction";
 
-    public static void initSayHi(String replyJson) {
+    public static boolean initSayHi(String replyJson) {
         try {
 
             LoggerUtil.logI(TAG, "replyJson 19 :" + replyJson);
+            List<Long> midList = new ArrayList<>();
+//            UsersAndChats.sendMsg.clear();
             JSONArray jsonArray = new JSONArray(replyJson);
             for (int j = 0; j < jsonArray.length(); j++) {
                 JSONObject jsonObject = new JSONObject(jsonArray.getString(j));
                 String content = jsonObject.getString("content");
                 LoggerUtil.logI(TAG, "content 24 :" + content + "-----" + j + "---->");
-
 
 
                 if (content.startsWith("语音") || content.startsWith("图片")
@@ -46,15 +48,15 @@ public class SendVideoInitAction {
                     String[] array = content.split(":");
                     String path = array[1].trim();
                     if (TextUtils.isEmpty(path)) {
-                        return;
+                        return false;
                     }
                     boolean exists = new File(path).exists();
                     LoggerUtil.logI(TAG, "path 86 :" + path + "-----" + j + "---->" + exists + "---->" + j + "---->" + content);
                     if (!exists) {
                         LoggerUtil.sendLog7("发送收藏夹失败，文件不存在！！");
-                        return;
+                        return false;
                     }
-                    long curTime = System.currentTimeMillis() / 1000;
+//                    long curTime = System.currentTimeMillis() / 1000;
                     if (content.startsWith("语音")) {
                         SendMessage.sendVoice(getClientUserId(classLoader), path);
 //                        SendMessage.sendVoice(user_id, path);
@@ -69,31 +71,55 @@ public class SendVideoInitAction {
                         SendMessage.sendVideo(false, getClientUserId(classLoader), path);
 //                    SendMessage.sendVideo(false, user_id, path);
                     }
-
-                    for (int i = 0; i < 120; i++) {
+                    for (int i = 0; i < 60 * 5; i++) {
                         SayHiMessageBean bean = queryMessages();
-                        LoggerUtil.logI(TAG, "bean  74---->" + bean + "---->" + i + "--->" + curTime);
-                        if (curTime <= bean.getDate() && bean.getMid() > 0) {
-                            break;
+                        boolean contains = midList.contains(bean.getMid());
+                        LoggerUtil.logI(TAG, "bean  77---->" + bean + "---->" + i + "--->" + contains);
+                        if (bean.getMid() > 0) {
+                            if (!contains) {
+                                break;
+                            }
                         }
+//                        if (curTime <= bean.getDate() && bean.getMid() > 0) {
+//                            break;
+//                        }
                         SystemClock.sleep(1000);
                     }
 
                     SayHiMessageBean bean = queryMessages();
-                    LoggerUtil.logI(TAG, "bean  68---->" + bean + "---->" + j + "--->" + curTime);//-210072
-                    if (curTime <= bean.date && bean.mid > 0) {
+                    LoggerUtil.logI(TAG, "bean  90---->" + bean + "---->" + j);//-210072
+//                    if (curTime <= bean.date && bean.mid > 0) {
+                    if (bean.mid > 0 && !midList.contains(bean.getMid())) {
                         WriteFileUtil.write(bean.getMid() + "", Global.SEND_VIDEO_MESSAGE + j);
                         LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏成功：" + content);
+                        midList.add(bean.getMid());
                     } else {
                         LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏超时：" + content);
+                        return false;
                     }
+
+//                    ArrayList list1 = SendForwardAction.queryMessagesByMid(bean.getMid() + "");
+//                    LoggerUtil.logI(TAG, "list1 91 :" + list1.size() + "-----" + j+"--->"+list1);
+//                    if (list1.size() > 0) {
+//                        UsersAndChats.sendMsg.add(list1.get(0));
+//                    }
+
+
+                    SystemClock.sleep(1000);
 
                 }
 
             }
 
+//            int size = UsersAndChats.sendMsg.size();
+//            LoggerUtil.logI(TAG, "size 104 :" + size );
+//            LoggerUtil.sendLog7("发送收藏完毕，共有"+size+"个收藏消息");
+
         } catch (Exception e) {
+            LoggerUtil.logI(TAG, "eee 109 :" + CrashHandler.getInstance().printCrash(e));
         }
+
+        return true;
 
     }
 
@@ -167,7 +193,7 @@ public class SendVideoInitAction {
 
                 long fullMid = (long) XposedHelpers.callMethod(cursor, "longValue", 3);
                 XposedHelpers.setIntField(TLRPCMessage, "id", (int) fullMid);
-                LoggerUtil.logI(TAG,"fullMid  170---->"+fullMid);
+                LoggerUtil.logI(TAG, "fullMid  170---->" + fullMid);
 
 
                 if ((fullMid & 0xffffffff00000000L) == 0xffffffff00000000L && send_state > 0) {
@@ -315,7 +341,6 @@ public class SendVideoInitAction {
 
 
                 Object messageObject = XposedHelpers.newInstance(MessageObject, currentId, TLRPCMessage, false, false);
-
                 msgs.add(messageObject);
                 Object messageText = XposedHelpers.getObjectField(msgs.get(0), "messageText");
                 LoggerUtil.logI(TAG, "messageText  247---->" + messageText + "--->" + fullMid);

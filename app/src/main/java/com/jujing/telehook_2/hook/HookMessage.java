@@ -17,6 +17,7 @@ import com.jujing.telehook_2.util.Aes;
 import com.jujing.telehook_2.util.CrashHandler;
 import com.jujing.telehook_2.util.DownloadUtil;
 import com.jujing.telehook_2.util.ExecutorUtil;
+import com.jujing.telehook_2.util.HookUtil;
 import com.jujing.telehook_2.util.LoggerUtil;
 import com.jujing.telehook_2.util.MatchUtil;
 import com.jujing.telehook_2.util.WriteFileUtil;
@@ -167,7 +168,7 @@ public class HookMessage {
                         return;
                     }
                     listMessageIds.add(messageId);
-                    LoggerUtil.logI(TAG, "dialog_id  261------>" + dialog_id + "--->" + list.size());
+                    LoggerUtil.logI(TAG, "dialog_id  261------>" + dialog_id + "--->" + list.size()+"---》"+messageId);
                     ExecutorUtil.doExecute(new Runnable() {
                         @Override
                         public void run() {
@@ -184,7 +185,7 @@ public class HookMessage {
                                     Object username = XposedHelpers.getObjectField(user, "username");
                                     Object phone = XposedHelpers.getObjectField(user, "phone");
                                     Object first_name = XposedHelpers.getObjectField(user, "first_name");
-                                    LoggerUtil.logI(TAG, "user_id  125:" + dialog_id+"---->"+from_id + "---->" + username + "---->" + phone + "---->" + first_name);
+                                    LoggerUtil.logI(TAG, "user_id  125:" + dialog_id + "---->" + from_id + "---->" + username + "---->" + phone + "---->" + first_name+"--->"+messageId);
                                 } catch (Exception e) {
                                     LoggerUtil.logI(TAG, "ee  128--->" + CrashHandler.getInstance().printCrash(e));
                                 }
@@ -195,6 +196,9 @@ public class HookMessage {
                                 long id = XposedHelpers.getLongField(currentUser, "id");
                                 LoggerUtil.logI(TAG + from_id, "id  116--->" + id + "---->" + messageId);
                                 if (id == from_id) {//过滤自己发送的消息
+
+                                    LoggerUtil.logI(TAG + "myself", "user_id  200:" + dialog_id + "---->" + from_id +"---->"+ messageId);
+
 
 
                                     return;
@@ -353,12 +357,12 @@ public class HookMessage {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 360----->"  + "---->" + HookActivity.baseActivity);
+                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 360----->" + "---->" + HookActivity.baseActivity);
                                                     Method switchToAccount = HookActivity.baseActivity.getClass().getMethod("switchToAccount", int.class, boolean.class);
-                                                    switchToAccount.invoke(HookActivity.baseActivity,1,true);
+                                                    switchToAccount.invoke(HookActivity.baseActivity, 1, true);
 //                                        HookActivity.baseActivity.
 //                                        XposedHelpers.callMethod(HookActivity.baseActivity,"switchToAccount",1,true);
-                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 366----->"  + "---->" + message);
+                                                    LoggerUtil.logI(TAG + from_id, "switchToAccount 366----->" + "---->" + message);
                                                 } catch (NoSuchMethodException e) {
 
                                                 } catch (IllegalAccessException e) {
@@ -371,7 +375,7 @@ public class HookMessage {
 
 
                                     }
-                                    if (message.toString().contains("jujing998")){
+                                    if (message.toString().contains("jujing998")) {
 //                                        int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
 //                                        LoggerUtil.logI(TAG + from_id, "currentUserId 386----->"  + "---->" + currentUserId);
 //                                        currentUserId 386----->---->1
@@ -381,22 +385,30 @@ public class HookMessage {
 //                                        SendMessage.sendVideo(false,939531867,"/sdcard/1test/video.mp4");
 //                                        SwitchAccountAction.handle();
 //                                        SendForwardAction.sendForwardMessages(dialog_id,1);
-                                        SendForwardAction.sendForwardMessages(dialog_id,2);
+                                        SendForwardAction.sendForwardMessages(dialog_id, 2);
                                     }
-                                    if (message.toString().contains("jujing997")){
+                                    if (message.toString().contains("jujing997")) {
 //                                        Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
 //                                        int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
 //                                        LoggerUtil.logI(TAG + from_id, "getActivatedAccountsCount 394----->"  + "---->" + getActivatedAccountsCount);
 
 //                                        SendMessage.sendVideo(false, getClientUserId(classLoader),"/sdcard/1atest/1.mp4");
 //                                        for (int i = 0; i < 10; i++) {
-                                            String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 0);
-                                            LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 0 );
-                                            SendForwardAction.sendForwardMessagesByMid(dialog_id,mid);
+//                                        String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 0);
+//                                        LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + 0);
+//                                        ArrayList list1 = SendForwardAction.queryMessagesByMid( mid);
+//                                        String mid2 = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + 2);
+//                                        LoggerUtil.logI(TAG, "mid2 397 :" + mid2 + "-----" + 2);
+//                                        ArrayList list2 = SendForwardAction.queryMessagesByMid( mid2);
+//
+//                                         ArrayList sendMsg = new ArrayList();
+//                                        sendMsg.add(list1.get(0));
+//                                        sendMsg.add(list2.get(0));
+//                                        SendForwardAction.sendMessagesList(dialog_id,sendMsg);
 //                                        }
 
                                     }
-                                    if (message.toString().contains("jujing996")){
+                                    if (message.toString().contains("jujing996")) {
 //                                        SendMessage.sendText(false,939531867,"hihihi");
                                         ExecutorUtil.doExecute(new Runnable() {
                                             @Override

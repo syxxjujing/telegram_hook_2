@@ -1,9 +1,14 @@
 package com.jujing.telehook_2.model.operate;
 
+import android.content.DialogInterface;
 import android.os.SystemClock;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.jujing.telehook_2.Global;
+import com.jujing.telehook_2.MainActivity;
+import com.jujing.telehook_2.bean.LocalReplyBean;
 import com.jujing.telehook_2.hook.HookActivity;
 import com.jujing.telehook_2.model.UsersAndChats;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -46,7 +51,29 @@ public class SearchContactAction {
             if (judgeSayHiContent1(replyJson)) {
                 return;
             }
-            SendVideoInitAction.initSayHi(replyJson);
+            boolean b = SendVideoInitAction.initSayHi(replyJson);
+            LoggerUtil.logI(TAG, "bbb  50---->" + b);
+            if (!b) {
+                LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
+                HookActivity.baseActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
+                                .setTitle("消息发送收藏夹失败！请重新再试")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
+                                    }
+                                })
+                                .setNegativeButton("取消", null);
+                        builder.show();
+                    }
+                });
+                UsersAndChats.isStart = false;
+                return;
+            }
+
 
             UsersAndChats.sentNum = 0;
             firstIdList.clear();
@@ -452,22 +479,33 @@ public class SearchContactAction {
                     continue;
                 }
 
-//                int interval_messages = 0;
-//                String interval_messages0 = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
-//                if (interval_messages0.contains("-")) {
-//                    String[] split = interval_messages0.split("-");
-//                    int start = Integer.parseInt(split[0]);
-//                    int end = Integer.parseInt(split[1]);
-//                    interval_messages = RandomUtil.randomNumber(start, end);
-//                } else {
-//                    interval_messages = Integer.parseInt(interval_messages0);
-//                }
-//
-//                LoggerUtil.logI(TAG, "interval_messages 309 :" + interval_messages + "---->" + user_id);
-//                SystemClock.sleep(interval_messages*1000);
+
+                int interval_messages = 0;
+                try {
+                    String interval_messages0 = WriteFileUtil.read(Global.INTERVAL_MESSAGES);
+                    if (interval_messages0.contains("-")) {
+                        String[] split = interval_messages0.split("-");
+                        int start = Integer.parseInt(split[0]);
+                        int end = Integer.parseInt(split[1]);
+                        interval_messages = RandomUtil.randomNumber(start, end);
+                    } else {
+                        interval_messages = Integer.parseInt(interval_messages0);
+                    }
+                } catch (Exception e) {
+
+                }
+
+                LoggerUtil.logI(TAG, "interval_messages 474 :" + interval_messages + "---->" + user_id);
+                SystemClock.sleep(interval_messages * 1000);
 
 
             }
+
+//            int size = UsersAndChats.sendMsg.size();
+//            LoggerUtil.logI(TAG, "size 477 :" + size );
+//            if (size>0){
+//                SendForwardAction.sendMessagesList(user_id,UsersAndChats.sendMsg);
+//            }
         } catch (Exception e) {
             LoggerUtil.logI(TAG, "e 327 :" + CrashHandler.getInstance().printCrash(e) + "---->" + user_id);
         }

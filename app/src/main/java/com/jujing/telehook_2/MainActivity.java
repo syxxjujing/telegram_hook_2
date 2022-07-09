@@ -200,6 +200,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        EditText et_interval = findViewById(R.id.et_interval);
+        et_interval.setText(WriteFileUtil.read(Global.INTERVAL_MESSAGES));
+        et_interval.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "INTERVAL_MESSAGES  219--->" + trim);
+                WriteFileUtil.write(trim, Global.INTERVAL_MESSAGES);
+            }
+        });
+
         Button btn_dazhaohu = findViewById(R.id.btn_dazhaohu);
         btn_dazhaohu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -809,26 +830,6 @@ public class MainActivity extends AppCompatActivity {
                 WriteFileUtil.write(b + "", Global.IS_ONLY_UNREAD);
             }
         });
-        EditText et_interval = findViewById(R.id.et_interval);
-        et_interval.setText(WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL));
-        et_interval.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String trim = s.toString().trim();
-                LoggerUtil.logI(TAG, "SAY_HI_ROUND_INTERVAL  263--->" + trim);
-                WriteFileUtil.write(trim, Global.SAY_HI_ROUND_INTERVAL);
-            }
-        });
         lv_reply_2 = findViewById(R.id.lv_reply_2);
         Button btn_local_set_2 = findViewById(R.id.btn_local_set_2);
         btn_local_set_2.setOnClickListener(new View.OnClickListener() {
@@ -999,6 +1000,27 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .setNegativeButton("取消", null);
                 builder.show();
+            }
+        });
+
+        EditText et_round = findViewById(R.id.et_round);
+        et_round.setText(WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL));
+        et_round.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String trim = s.toString().trim();
+                LoggerUtil.logI(TAG, "SAY_HI_ROUND_INTERVAL  1022--->" + trim);
+                WriteFileUtil.write(trim, Global.SAY_HI_ROUND_INTERVAL);
             }
         });
     }

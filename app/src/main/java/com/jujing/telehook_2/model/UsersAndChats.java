@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -357,6 +358,7 @@ public class UsersAndChats {
     }
 
     public static int sentNum = 0;
+//    public static ArrayList sendMsg = new ArrayList();
 
     public static boolean sendM(long user_id, int j, String content, String TAG) {
         try {
@@ -384,6 +386,7 @@ public class UsersAndChats {
             sentNum++;
             LoggerUtil.sendLog7("开始给第" + sentNum + "个人发消息");
             LoggerUtil.sendLog7("发送消息：" + content + "--->" + user_id);
+
             if (content.startsWith("语音") || content.startsWith("图片")
                     || content.startsWith("gif") || content.startsWith("视频")) {
                 String[] array = content.split(":");
@@ -400,14 +403,22 @@ public class UsersAndChats {
 
 
                 String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
-                LoggerUtil.logI(TAG, "mid 410 :" + mid + "-----" + j );
+                LoggerUtil.logI(TAG, "mid 405 :" + mid + "-----" + j+"---->"+user_id );
                 if (TextUtils.isEmpty(mid)){
                     LoggerUtil.sendLog7("收藏的消息不存在："+path);
                     return true;
                 }
 
+//                ArrayList list1 = SendForwardAction.queryMessagesByMid(mid);
+//                LoggerUtil.logI(TAG, "list1 412 :" + list1.size() + "-----" + j );
+//                if (list1.size()>0){
+//                    sendMsg.add(list1.get(0));
+//                }
+
                 SendForwardAction.sendForwardMessagesByMid(user_id,mid);
                 LoggerUtil.sendLog7("第"+(j+1)+"个收藏消息发送完毕："+content);
+
+
 //                if (content.startsWith("语音")) {
 //                    SendMessage.sendVoice(user_id, path);
 //                } else if (content.startsWith("图片")) {
@@ -445,6 +456,8 @@ public class UsersAndChats {
             } else {
                 SendMessage.sendMessage(content, user_id);
             }
+
+
         } catch (Exception e) {
             LoggerUtil.logI(TAG, "eee 328 :" + CrashHandler.getInstance().printCrash(e) + "-----" + j);
         }
