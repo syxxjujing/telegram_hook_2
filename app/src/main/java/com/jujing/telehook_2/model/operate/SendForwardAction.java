@@ -507,7 +507,7 @@ public class SendForwardAction {
                 return;
             }
 
-            LoggerUtil.logI(TAG, "msgs size  252:" + msgs.size());
+//            LoggerUtil.logI(TAG, "msgs size  252:" + msgs.size());
 
             final ArrayList sendMsg = new ArrayList();
             sendMsg.add(msgs.get(0));
@@ -518,7 +518,7 @@ public class SendForwardAction {
                 @Override
                 public void run() {
                     XposedHelpers.callMethod(SendMessagesHelper, "sendMessage", sendMsg, toUid, false, false, true, 0);
-                    LoggerUtil.logI(TAG, "发送收藏  263--->" + mid);
+                    LoggerUtil.logI(TAG, "发送收藏  263--->" + mid+"---->"+toUid);
                 }
             });
 

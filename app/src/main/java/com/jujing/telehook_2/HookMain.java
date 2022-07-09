@@ -438,6 +438,7 @@ public class HookMain implements IXposedHookLoadPackage {
 //                        String interval_messages = intent.getStringExtra("interval");
 
                         LoggerUtil.logI(TAG, "inerval_friends  440----------" + inerval_friends + "---->" + 0);
+                        UsersAndChats.sentNum = 0;
                         UsersAndChats.contacts(inerval_friends, "0");
                     }
                 }).start();

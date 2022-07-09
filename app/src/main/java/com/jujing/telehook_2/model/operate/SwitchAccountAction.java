@@ -2,7 +2,9 @@ package com.jujing.telehook_2.model.operate;
 
 import static com.jujing.telehook_2.HookMain.classLoader;
 
+import android.content.DialogInterface;
 import android.os.SystemClock;
+import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
 import com.jujing.telehook_2.HookMain;
@@ -15,6 +17,8 @@ import com.jujing.telehook_2.util.WriteFileUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -49,6 +53,15 @@ public class SwitchAccountAction {
     }
 
     public static void handleSwitch(int num) {
+        String nums = WriteFileUtil.read(Global.SWITCH_NUMS + num);
+        LoggerUtil.logI(TAG, "nums 55---->" + nums + "---->" + num);
+        if (nums.equals("switched")) {
+            LoggerUtil.logI(TAG, "switched 58---->" + nums + "---->" + num);
+            LoggerUtil.sendLog7("此账号已切换过！");
+            return;
+        }
+
+
         HookActivity.baseActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -74,6 +87,7 @@ public class SwitchAccountAction {
                 break;
             }
         }
+        WriteFileUtil.write("switched", Global.SWITCH_NUMS + num);
         Object currentUser = UsersAndChats.getCurrentUser();
 //                HookUtil.printAllFieldForSuperclass(currentUser);
         long id = XposedHelpers.getLongField(currentUser, "id");
@@ -87,11 +101,42 @@ public class SwitchAccountAction {
         LoggerUtil.logI(TAG, "phone  87---->" + phone);
         WriteFileUtil.write(phone, Global.USER_INFO_PHONE);
 
-
+        String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+        LoggerUtil.logI(TAG, "replyJson  92---->" + replyJson);
+        boolean b = SendVideoInitAction.initSayHi(replyJson);
+        LoggerUtil.logI(TAG, "bbb  94---->" + b);
+        if (!b) {
+            LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
+            HookActivity.baseActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
+                            .setTitle("消息发送收藏夹失败！请重新再试")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
+                                }
+                            })
+                            .setNegativeButton("取消", null);
+                    builder.show();
+                }
+            });
+            UsersAndChats.isStart = false;
+            return;
+        }
     }
+
+    public static boolean isSwitch = false;
 
     public static void handle() {
         try {
+            if (isSwitch) {
+                LoggerUtil.logI(TAG, "isSwitch 120----->" + isSwitch);
+                LoggerUtil.sendLog7("正在切换账号！");
+                return;
+            }
+            isSwitch = true;
             LoggerUtil.sendLog7("已经发送了" + UsersAndChats.sentNum + "个人，开始切换账号");
             Class UserConfig = classLoader.loadClass("org.telegram.messenger.UserConfig");
             int getActivatedAccountsCount = (int) XposedHelpers.callStaticMethod(UserConfig, "getActivatedAccountsCount");
@@ -102,6 +147,7 @@ public class SwitchAccountAction {
             } else if (getActivatedAccountsCount == 2) {
                 int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
                 LoggerUtil.logI(TAG, "currentUserId 380----->" + currentUserId);
+                WriteFileUtil.write("switched", Global.SWITCH_NUMS + currentUserId);
                 if (currentUserId == 0) {
                     LoggerUtil.sendLog7("当前登录的是第一个账号，正在切换第二个账号");
                     SwitchAccountAction.handleSwitch(1);
@@ -113,6 +159,7 @@ public class SwitchAccountAction {
             } else if (getActivatedAccountsCount == 3) {
                 int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
                 LoggerUtil.logI(TAG, "currentUserId 115----->" + currentUserId);
+                WriteFileUtil.write("switched", Global.SWITCH_NUMS + currentUserId);
                 if (currentUserId == 0) {
                     LoggerUtil.sendLog7("当前登录的是第一个账号，正在切换第二个账号");
                     SwitchAccountAction.handleSwitch(1);
@@ -128,5 +175,7 @@ public class SwitchAccountAction {
         } catch (Exception e) {
             LoggerUtil.logI(TAG, "eee 90----->" + CrashHandler.getInstance().printCrash(e));
         }
+
+        isSwitch = false;
     }
 }

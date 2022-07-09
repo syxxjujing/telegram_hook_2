@@ -5,11 +5,8 @@ import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
 import com.jujing.telehook_2.HookMain;
-import com.jujing.telehook_2.bean.LocalReplyBean;
 import com.jujing.telehook_2.hook.HookActivity;
-import com.jujing.telehook_2.hook.HookSqlite;
 import com.jujing.telehook_2.model.operate.SendForwardAction;
-import com.jujing.telehook_2.model.operate.SwitchAccountAction;
 import com.jujing.telehook_2.model.operate.UserReadAction;
 import com.jujing.telehook_2.model.operate.VoiceCallAction;
 import com.jujing.telehook_2.util.CrashHandler;
@@ -23,12 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 import static com.jujing.telehook_2.HookMain.classLoader;
@@ -370,21 +363,22 @@ public class UsersAndChats {
             if (TextUtils.isEmpty(content)) {
                 return true;
             }
-            try {
-                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
-                LoggerUtil.logI(TAG, "switch_num  370---->" + switch_num + "---->" + sentNum);
-                if (sentNum != 0 && switch_num != 0) {
-                    if (sentNum % switch_num == 0) {
-                        SwitchAccountAction.handle();
-                    }
-                }
-
-            } catch (Exception e) {
-                LoggerUtil.logI(TAG, "eee  381---->" + CrashHandler.getInstance().printCrash(e));
-            }
-
-            sentNum++;
-            LoggerUtil.sendLog7("开始给第" + sentNum + "个人发消息");
+//            try {
+//                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
+//                LoggerUtil.logI(TAG, "switch_num  370---->" + switch_num + "---->" + sentNum);
+//                if (sentNum != 0 && switch_num != 0) {
+//                    if (sentNum % switch_num == 0) {
+//                        LoggerUtil.logI(TAG, "switch_num  378---->" + switch_num + "---->" + sentNum);
+//                        SwitchAccountAction.handle();
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                LoggerUtil.logI(TAG, "eee  381---->" + CrashHandler.getInstance().printCrash(e));
+//            }
+//
+//            sentNum++;
+//            LoggerUtil.sendLog7("开始给第" + sentNum + "个人发消息");
             LoggerUtil.sendLog7("发送消息：" + content + "--->" + user_id);
 
             if (content.startsWith("语音") || content.startsWith("图片")
