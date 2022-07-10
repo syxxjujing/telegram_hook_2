@@ -28,134 +28,28 @@ import static com.jujing.telehook_2.model.UsersAndChats.sendM;
 
 public class SearchContactAction {
 
-
+    public static boolean isTranning = false;
     private static final String TAG = "SearchContactAction";
     public static List<Long> firstIdList = new ArrayList<>();//记录第一轮获取成功人的id
 
     public static void handle(String path) {
         try {
+            LoggerUtil.logI(TAG, "isTranning  37---->" + isTranning + "----->" + UsersAndChats.isStart);
+
             if (UsersAndChats.isStart) {
                 LoggerUtil.sendLog7("正在转发，请稍候...");
                 return;
             }
+            if (!isTranning){//没有运行过，就复位
+                UsersAndChats.sentNum = 0;
+                firstIdList.clear();
+            }
+
             UsersAndChats.isStart = true;
+            isTranning = true;
             LoggerUtil.sendLog7("开始转发...");
             List<String> stringList = WriteFileUtil.readFile(path);
-            LoggerUtil.logI(TAG, "stringList  38---->" + stringList.size());
-            LoggerUtil.sendLog7("共有" + stringList.size() + "个好友");
-            String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-            if (judgeSayHiContent1(replyJson)) {
-                return;
-            }
-            boolean b = SendVideoInitAction.initSayHi(replyJson);
-            LoggerUtil.logI(TAG, "bbb  50---->" + b);
-            if (!b) {
-                LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
-                HookActivity.baseActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
-                                .setTitle("消息发送收藏夹失败！请重新再试")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
-                                    }
-                                })
-                                .setNegativeButton("取消", null);
-                        builder.show();
-                    }
-                });
-                UsersAndChats.isStart = false;
-                return;
-            }
-
-
-            UsersAndChats.sentNum = 0;
-            firstIdList.clear();
-            for (int i = 0; i < stringList.size(); i++) {
-                String friends = stringList.get(i);
-                LoggerUtil.logI(TAG, "friends 55 :" + friends + "-----" + i);
-                if (judgeSent(friends)) {
-                    LoggerUtil.logI(TAG, "以前发送过了 51 :" + friends + "-----" + i);
-                    LoggerUtil.sendLog7("第" + (i + 1) + "个好友：" + friends + "，以前发送过了");
-                    continue;
-                }
-                //发送成功消息 就记录一下，下次就不发了
-                String sent_messages_user = WriteFileUtil.read(Global.SENT_MESSAGES_USER);
-                if (TextUtils.isEmpty(sent_messages_user)) {
-                    WriteFileUtil.write(friends, Global.SENT_MESSAGES_USER);
-                } else {
-                    WriteFileUtil.write(sent_messages_user + "," + friends, Global.SENT_MESSAGES_USER);
-                }
-
-                LoggerUtil.sendLog7("开始搜索第" + (i + 1) + "个好友：" + friends);
-
-                WriteFileUtil.write("0",Global.IS_SENDING+friends);
-//                isSendFinished = false;
-                SearchContactAction searchContactAction = new SearchContactAction();
-                searchContactAction.seachUsers(friends);
-                for (int j = 0; j < 60 * 60; j++) {
-                    String isSending = WriteFileUtil.read(Global.IS_SENDING + friends);
-
-                    LoggerUtil.logI(TAG, "isSending 106 :" + isSending + "-----" + j+"--->"+friends+"---->"+i);
-                    if (isSending.equals("0")) {
-                        SystemClock.sleep(1000);
-                        if (!UsersAndChats.isStart) {
-                            LoggerUtil.logI(TAG, "任务停止了 60 :" + isSending + "-----" + j + "---->" + friends + "---->" + i);
-                            HookActivity.showToast("任务停止了！!!");
-                            LoggerUtil.sendLog7("任务停止了！!!");
-                            return;
-                        }
-
-                    } else {
-                        LoggerUtil.logI(TAG, "isSendFinished 用了多少i 116 :" + isSending + "-----" + j + "---->" + friends+"----》"+i);
-                        break;
-                    }
-                }
-                String interval_friends0 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
-                int interval_friends = timeFormat(interval_friends0);
-
-                LoggerUtil.logI(TAG, "interval_friends 97 :" + interval_friends);
-//                SystemClock.sleep(interval_friends);
-                if (sleepTime(interval_friends)) {
-                    return;
-                }
-
-            }
-            String say_hi_round_interval0 = WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL);
-            LoggerUtil.logI(TAG, "say_hi_round_interval0 102 :" + say_hi_round_interval0);
-            int say_hi_round_interval = timeFormat(say_hi_round_interval0);
-            LoggerUtil.sendLog7("第一轮结束，间隔" + say_hi_round_interval + "秒后，开始第二轮");
-            LoggerUtil.logI(TAG, "say_hi_round_interval 106 :" + say_hi_round_interval);
-            if (sleepTime(say_hi_round_interval)) {
-                return;
-            }
-
-            String replyJson_2 = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON_2);
-            if (judgeSayHiContent2(replyJson_2)) {
-                return;
-            }
-            SendVideoInitAction.initSayHi(replyJson_2);
-            String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
-            LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
-            List<Long> readList = UserReadAction.checkReadNum();
-            LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread + "---->" + readList.size());
-            LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
-            UsersAndChats.sentNum = 0;
-            for (int i = 0; i < firstIdList.size(); i++) {
-                long firstId = firstIdList.get(i);
-                if (is_only_unread.equals("true")) {
-                    boolean contains = readList.contains(firstId);
-                    LoggerUtil.logI(TAG, "firstId 117 :" + firstId + "--->" + contains + "--->" + i);
-                    if (contains) {
-                        LoggerUtil.sendLog7(firstId + "为已读了第一轮消息，故不发送第二轮");
-                        continue;
-                    }
-                }
-                sendMission(firstId, replyJson_2, "txt");
-
-            }
+            tran(stringList, 0);
 
 
         } catch (Exception e) {
@@ -163,6 +57,185 @@ public class SearchContactAction {
         }
 //        UsersAndChats.isStart = false;
 
+    }
+
+    private static void tran(List<String> stringList, int index) {
+
+        Object currentUser = UsersAndChats.getCurrentUser();
+        long curId = XposedHelpers.getLongField(currentUser, "id");
+        LoggerUtil.logI(TAG, "stringList  38---->" + stringList.size() + "----->" + index+"---->"+curId);
+        LoggerUtil.sendLog7("共有" + stringList.size() + "个好友");
+        String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+        if (judgeSayHiContent1(replyJson)) {
+            return;
+        }
+        boolean b = SendVideoInitAction.initSayHi(replyJson,1);
+        LoggerUtil.logI(TAG, "bbb  50---->" + b);
+        if (!b) {
+            LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
+            HookActivity.baseActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
+                            .setTitle("消息发送收藏夹失败！请重新再试")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
+                                }
+                            })
+                            .setNegativeButton("取消", null);
+                    builder.show();
+                }
+            });
+            UsersAndChats.isStart = false;
+            return;
+        }
+
+
+
+        for (int i = 0; i < stringList.size(); i++) {
+            String friends = stringList.get(i);
+            LoggerUtil.logI(TAG, "friends 55 :" + friends + "-----" + i + "---->" + UsersAndChats.sentNum);
+
+            if (judgeSent(friends)) {
+                LoggerUtil.logI(TAG, "以前发送过了 51 :" + friends + "-----" + i);
+//                LoggerUtil.sendLog7("第" + (i + 1) + "个好友：" + friends + "，以前发送过了");
+                continue;
+            }
+
+
+
+            LoggerUtil.sendLog7("开始搜索第" + (i + 1) + "个好友：" + friends);
+
+            WriteFileUtil.write("0", Global.IS_SENDING + friends);
+//                isSendFinished = false;
+            SearchContactAction searchContactAction = new SearchContactAction();
+            searchContactAction.seachUsers(friends,1);
+            for (int j = 0; j < 60 * 60; j++) {
+                String isSending = WriteFileUtil.read(Global.IS_SENDING + friends);
+
+                LoggerUtil.logI(TAG, "isSending 106 :" + isSending + "-----" + j + "--->" + friends + "---->" + i);
+                if (isSending.equals("0")) {
+                    SystemClock.sleep(1000);
+                    if (!UsersAndChats.isStart) {
+                        LoggerUtil.logI(TAG, "任务停止了 60 :" + isSending + "-----" + j + "---->" + friends + "---->" + i);
+                        HookActivity.showToast("任务停止了！!!");
+                        LoggerUtil.sendLog7("任务停止了！!!");
+                        return;
+                    }
+
+                } else {
+                    LoggerUtil.logI(TAG, "isSendFinished 用了多少i 116 :" + isSending + "-----" + j + "---->" + friends + "----》" + i);
+                    break;
+                }
+            }
+
+            //发送成功消息 就记录一下，下次就不发了
+            String sent_messages_user = WriteFileUtil.read(Global.SENT_MESSAGES_USER);
+            if (TextUtils.isEmpty(sent_messages_user)) {
+                WriteFileUtil.write(friends, Global.SENT_MESSAGES_USER);
+            } else {
+                WriteFileUtil.write(sent_messages_user + "," + friends, Global.SENT_MESSAGES_USER);
+            }
+
+
+            boolean isSwitch = judgeSwitch();
+            LoggerUtil.logI(TAG, "isSwitch 122 :" + isSwitch + "--->" + friends + "-----" + i);
+            if (isSwitch) {
+                LoggerUtil.logI(TAG, "该发第二轮了 isSwitch 135 :" + isSwitch + "--->" + friends + "-----" + i + "--->" + UsersAndChats.sentNum);
+                break;//该发第二轮了
+            }
+
+
+            String interval_friends0 = WriteFileUtil.read(Global.INTERVAL_FRIENDS);
+            int interval_friends = timeFormat(interval_friends0);
+
+            LoggerUtil.logI(TAG, "interval_friends 97 :" + interval_friends);
+//                SystemClock.sleep(interval_friends);
+            if (sleepTime(interval_friends)) {
+                return;
+            }
+
+        }
+        String say_hi_round_interval0 = WriteFileUtil.read(Global.SAY_HI_ROUND_INTERVAL);
+        LoggerUtil.logI(TAG, "say_hi_round_interval0 102 :" + say_hi_round_interval0);
+        int say_hi_round_interval = timeFormat(say_hi_round_interval0);
+        LoggerUtil.sendLog7("第一轮结束，间隔" + say_hi_round_interval + "秒后，开始第二轮");
+        LoggerUtil.logI(TAG, "say_hi_round_interval 106 :" + say_hi_round_interval);
+        if (sleepTime(say_hi_round_interval)) {
+            return;
+        }
+
+        String replyJson_2 = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON_2);
+        if (judgeSayHiContent2(replyJson_2)) {
+            LoggerUtil.logI(TAG, "第一轮打招呼发送完毕，准备切换账号。   137---");
+            LoggerUtil.sendLog7("第一轮打招呼发送完毕，准备切换账号。");
+            SystemClock.sleep(10000);
+            boolean isSwitch = SwitchAccountAction.handle();
+            LoggerUtil.logI(TAG, "isSwitch   164---"+isSwitch);
+            if (isSwitch){
+                SystemClock.sleep(2000);
+                tran(stringList, ++index);
+                return;
+            }
+
+
+            return;
+        }
+        SendVideoInitAction.initSayHi(replyJson_2,2);
+        String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
+        LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
+        List<Long> readList = UserReadAction.checkReadNum();
+        LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread + "---->" + readList.size());
+        LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
+        UsersAndChats.sentNum = 0;
+        for (int i = 0; i < firstIdList.size(); i++) {
+            long firstId = firstIdList.get(i);
+            if (is_only_unread.equals("true")) {
+                boolean contains = readList.contains(firstId);
+                LoggerUtil.logI(TAG, "firstId 117 :" + firstId + "--->" + contains + "--->" + i);
+                if (contains) {
+                    LoggerUtil.sendLog7(firstId + "为已读了第一轮消息，故不发送第二轮");
+                    continue;
+                }
+            }
+            sendMission(firstId, replyJson_2, "txt", 2);
+
+        }
+
+        LoggerUtil.logI(TAG, "第二轮打招呼发送完毕，准备切换账号。   160---");
+        LoggerUtil.sendLog7("第二轮打招呼发送完毕，准备切换账号。");
+        SystemClock.sleep(10000);
+        boolean isSwitch = SwitchAccountAction.handle();
+        LoggerUtil.logI(TAG, "isSwitch   199---"+isSwitch);
+        if (isSwitch){
+            SystemClock.sleep(2000);
+            tran(stringList, ++index);
+            return;
+        }
+
+        LoggerUtil.logI(TAG, "任务跑完了！！！！！！！！！");
+        isTranning = false;
+    }
+
+    private static boolean judgeSwitch() {
+        boolean isSwitch = false;
+        try {
+            int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
+            LoggerUtil.logI(TAG, "switch_num  194---->" + switch_num + "---->" + UsersAndChats.sentNum);
+            if (UsersAndChats.sentNum != 0 && switch_num != 0) {
+                if (UsersAndChats.sentNum % switch_num == 0) {
+                    LoggerUtil.logI(TAG, "switch_num  197---->" + switch_num + "---->" + UsersAndChats.sentNum);
+//                            SwitchAccountAction.handle();
+                    isSwitch = true;
+                }
+            }
+
+        } catch (Exception e) {
+            LoggerUtil.logI(TAG, "eee  478---->" + CrashHandler.getInstance().printCrash(e));
+        }
+        return isSwitch;
     }
 
     private static boolean sleepTime(int interval) {
@@ -259,7 +332,7 @@ public class SearchContactAction {
 
 //    public static boolean isSendFinished = false;
 
-    public void seachUsers(final String txt) {
+    public void seachUsers(final String txt, int round) {
         try {
 
             // txt="@Kenn_Wu";
@@ -306,7 +379,7 @@ public class SearchContactAction {
                         if (users == null || users.isEmpty()) {
                             LoggerUtil.logI(TAG, "搜索出错:users==null||users.isEmpty----》" + txt);
                             LoggerUtil.sendLog7("搜索出错:users==null||users.isEmpty---->" + txt);
-                            WriteFileUtil.write("1",Global.IS_SENDING+txt);
+                            WriteFileUtil.write("1", Global.IS_SENDING + txt);
                             return;
                         }
 
@@ -329,7 +402,7 @@ public class SearchContactAction {
                                 LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
                                 firstIdList.add(id);
                                 //保存用户
-                                saveSearchUsers(id,txt);
+                                saveSearchUsers(id, txt,round);
 //                                SendMessage.sendMessage0(currentAccount, "12346", id);
 //                                addContact(user);
 //                                new Thread(new Runnable() {
@@ -345,16 +418,16 @@ public class SearchContactAction {
                                 LoggerUtil.logI(TAG, "搜索到用户 193----->" + username + " id:" + id + " first_name:" + first_name);
                                 LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
 
-                                saveSearchUsers(id, txt);
+                                saveSearchUsers(id, txt, round);
                             } else {
-                                WriteFileUtil.write("1",Global.IS_SENDING+txt);
+                                WriteFileUtil.write("1", Global.IS_SENDING + txt);
                                 LoggerUtil.sendLog7("搜索失败！");
                             }
 
                         }
                     } catch (Exception e) {
                         LoggerUtil.logI(TAG, "eee  92---->" + CrashHandler.getInstance().printCrash(e));
-                        WriteFileUtil.write("1",Global.IS_SENDING+txt);
+                        WriteFileUtil.write("1", Global.IS_SENDING + txt);
                     }
 
 
@@ -408,7 +481,7 @@ public class SearchContactAction {
 
     }
 
-    void saveSearchUsers(final long user, String txt) {
+    void saveSearchUsers(final long user, String txt, int round) {
 
 
         try {
@@ -440,7 +513,7 @@ public class SearchContactAction {
                             @Override
                             public void run() {
                                 String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-                                sendMission(user, replyJson,txt);
+                                sendMission(user, replyJson, txt,round);
                             }
                         }).start();
 
@@ -459,24 +532,24 @@ public class SearchContactAction {
 
     }
 
-    public static void sendMission(long user_id, String replyJson, String txt) {
+    public static void sendMission(long user_id, String replyJson, String txt, int round) {
         try {
 
             LoggerUtil.logI(TAG, "replyJson 465 :" + replyJson + "---->" + user_id);
 
-            try {
-                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
-                LoggerUtil.logI(TAG, "switch_num  469---->" + switch_num + "---->" + UsersAndChats.sentNum);
-                if (UsersAndChats.sentNum != 0 && switch_num != 0) {
-                    if (UsersAndChats.sentNum % switch_num == 0) {
-                        LoggerUtil.logI(TAG, "switch_num  472---->" + switch_num + "---->" + UsersAndChats.sentNum);
-                        SwitchAccountAction.handle();
-                    }
-                }
-
-            } catch (Exception e) {
-                LoggerUtil.logI(TAG, "eee  478---->" + CrashHandler.getInstance().printCrash(e));
-            }
+//            try {
+//                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
+//                LoggerUtil.logI(TAG, "switch_num  469---->" + switch_num + "---->" + UsersAndChats.sentNum);
+//                if (UsersAndChats.sentNum != 0 && switch_num != 0) {
+//                    if (UsersAndChats.sentNum % switch_num == 0) {
+//                        LoggerUtil.logI(TAG, "switch_num  472---->" + switch_num + "---->" + UsersAndChats.sentNum);
+//                        SwitchAccountAction.handle();
+//                    }
+//                }
+//
+//            } catch (Exception e) {
+//                LoggerUtil.logI(TAG, "eee  478---->" + CrashHandler.getInstance().printCrash(e));
+//            }
 
             UsersAndChats.sentNum++;
             LoggerUtil.sendLog7("开始给第" + UsersAndChats.sentNum + "个人发消息");
@@ -494,7 +567,7 @@ public class SearchContactAction {
                 }
 
 
-                if (sendM(user_id, j, content, TAG)) {
+                if (sendM(user_id, j, content, TAG,round)) {
                     continue;
                 }
 
@@ -529,8 +602,8 @@ public class SearchContactAction {
             LoggerUtil.logI(TAG, "e 327 :" + CrashHandler.getInstance().printCrash(e) + "---->" + user_id);
         }
 
-        LoggerUtil.logI(TAG, "end  532---->"+user_id );
-        WriteFileUtil.write("1",Global.IS_SENDING+txt);
+        LoggerUtil.logI(TAG, "end  532---->" + user_id);
+        WriteFileUtil.write("1", Global.IS_SENDING + txt);
 
 
     }

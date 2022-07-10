@@ -29,10 +29,12 @@ public class SendVideoInitAction {
 
     private static final String TAG = "SendVideoInitAction";
 
-    public static boolean initSayHi(String replyJson) {
+    public static boolean initSayHi(String replyJson, int round) {
         try {
 
-            LoggerUtil.logI(TAG, "replyJson 19 :" + replyJson);
+            LoggerUtil.logI(TAG, "replyJson 19 :" + replyJson + "--->" + round);
+            Object currentUser = UsersAndChats.getCurrentUser();
+            long curId = XposedHelpers.getLongField(currentUser, "id");
             List<Long> midList = new ArrayList<>();
 //            UsersAndChats.sendMsg.clear();
             JSONArray jsonArray = new JSONArray(replyJson);
@@ -56,6 +58,23 @@ public class SendVideoInitAction {
                         LoggerUtil.sendLog7("发送收藏夹失败，文件不存在！！");
                         return false;
                     }
+
+
+                    String read = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + round + curId + "/" + j);
+                    LoggerUtil.logI(TAG, "read  61---->" + read);
+                    if (!TextUtils.isEmpty(read)) {
+                        String[] split = read.split("@#@");
+                        if (split.length == 2) {
+                            String s = split[1];
+                            LoggerUtil.logI(TAG, "sss  66---->" + s + "--->" + path);
+                            if (s.equals(path)) {
+                                LoggerUtil.logI(TAG, "收藏夹里有  71---->" + s + "--->" + path+"---->"+curId+"---->"+round);
+                                continue;
+                            }
+                        }
+                    }
+
+
 //                    long curTime = System.currentTimeMillis() / 1000;
                     if (content.startsWith("语音")) {
                         SendMessage.sendVoice(getClientUserId(classLoader), path);
@@ -90,7 +109,8 @@ public class SendVideoInitAction {
                     LoggerUtil.logI(TAG, "bean  90---->" + bean + "---->" + j);//-210072
 //                    if (curTime <= bean.date && bean.mid > 0) {
                     if (bean.mid > 0 && !midList.contains(bean.getMid())) {
-                        WriteFileUtil.write(bean.getMid() + "", Global.SEND_VIDEO_MESSAGE + j);
+//                        WriteFileUtil.write(bean.getMid() + "", Global.SEND_VIDEO_MESSAGE + j);
+                        WriteFileUtil.write(bean.getMid() + "@#@" + path, Global.SEND_VIDEO_MESSAGE + round + curId + "/" + j);
                         LoggerUtil.sendLog7("第" + (j + 1) + "个发送消息到收藏成功：" + content);
                         midList.add(bean.getMid());
                     } else {

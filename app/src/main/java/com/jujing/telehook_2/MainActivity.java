@@ -289,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 LoggerUtil.logI(TAG, "确定清除缓存吗   94--->");
                                 WriteFileUtil.write("", Global.SENT_MESSAGES_USER);
+                                FileUtils.deleteDir(Global.SENT_MESSAGE);
 
                                 Toast.makeText(MainActivity.this, "清除成功！", Toast.LENGTH_SHORT).show();
                             }

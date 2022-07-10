@@ -1,6 +1,7 @@
 package com.jujing.telehook_2.model;
 
 import android.os.SystemClock;
+import android.support.constraint.solver.GoalRow;
 import android.text.TextUtils;
 
 import com.jujing.telehook_2.Global;
@@ -272,7 +273,7 @@ public class UsersAndChats {
                     JSONObject jsonObject = new JSONObject(jsonArray.getString(j));
                     String content = jsonObject.getString("content");
                     LoggerUtil.logI(TAG, "content 109 :" + content + "-----" + j);
-                    if (sendM(user_id, j, content, TAG)) {
+                    if (sendM(user_id, j, content, TAG, 1)) {
                         continue;
                     }
 
@@ -353,10 +354,11 @@ public class UsersAndChats {
     public static int sentNum = 0;
 //    public static ArrayList sendMsg = new ArrayList();
 
-    public static boolean sendM(long user_id, int j, String content, String TAG) {
+    public static boolean sendM(long user_id, int j, String content, String TAG, int round) {
         try {
             WriteFileUtil.write(user_id + "", Global.SENT_UID + user_id);
-
+            Object currentUser = UsersAndChats.getCurrentUser();
+            long curId = XposedHelpers.getLongField(currentUser, "id");
 
             UserReadAction.checkSendSucceedNum(false);
 
@@ -395,11 +397,13 @@ public class UsersAndChats {
                     return true;
                 }
 
-
-                String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
-                LoggerUtil.logI(TAG, "mid 405 :" + mid + "-----" + j+"---->"+user_id );
-                if (TextUtils.isEmpty(mid)){
-                    LoggerUtil.sendLog7("收藏的消息不存在："+path);
+                String read = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + round + curId + "/" + j);
+                LoggerUtil.logI(TAG, "read 399 :" + read + "-----" + j + "---->" + user_id);
+                String mid = read.split("@#@")[0];
+//                String mid = WriteFileUtil.read(Global.SEND_VIDEO_MESSAGE + j);
+                LoggerUtil.logI(TAG, "mid 405 :" + mid + "-----" + j + "---->" + user_id);
+                if (TextUtils.isEmpty(mid)) {
+                    LoggerUtil.sendLog7("收藏的消息不存在：" + path);
                     return true;
                 }
 
@@ -409,9 +413,17 @@ public class UsersAndChats {
 //                    sendMsg.add(list1.get(0));
 //                }
 
-                SendForwardAction.sendForwardMessagesByMid(user_id,mid);
-                LoggerUtil.sendLog7("第"+(j+1)+"个收藏消息发送完毕："+content);
+                String read1 = WriteFileUtil.read(Global.SENT_MESSAGE + user_id + "/" + mid);
+                LoggerUtil.logI(TAG,"read1  417---->"+read1+"---->"+Global.SENT_MESSAGE + user_id + "/" + mid);
+                if (read1.equals("sent")){
+                    LoggerUtil.sendLog7("消息发送过了");
+                    LoggerUtil.logI(TAG, "消息发送过了 419 :" + read + "-----" + j + "---->" + user_id);
+                    return true;
+                }
 
+                SendForwardAction.sendForwardMessagesByMid(user_id, mid);
+                LoggerUtil.sendLog7("第" + (j + 1) + "个收藏消息发送完毕：" + content);
+                WriteFileUtil.write("sent",Global.SENT_MESSAGE+user_id+"/"+mid);
 
 //                if (content.startsWith("语音")) {
 //                    SendMessage.sendVoice(user_id, path);
@@ -448,7 +460,15 @@ public class UsersAndChats {
                 LoggerUtil.logI(TAG, "index 318 :" + index + "-----" + j);
                 SendForwardAction.sendForwardMessages(user_id, index);
             } else {
+                String read1 = WriteFileUtil.read(Global.SENT_MESSAGE + user_id + "/wenzi"+round+j);
+                LoggerUtil.logI(TAG,"read1  464---->"+read1+"---->"+Global.SENT_MESSAGE + user_id + "/wenzi"+round+j);
+                if (read1.equals(content)){
+                    LoggerUtil.sendLog7("消息发送过了！");
+                    LoggerUtil.logI(TAG, "消息发送过了 465 :" + read1 + "-----" + j + "---->" + user_id);
+                    return true;
+                }
                 SendMessage.sendMessage(content, user_id);
+                WriteFileUtil.write(content,Global.SENT_MESSAGE+user_id+"/wenzi"+round+j);
             }
 
 

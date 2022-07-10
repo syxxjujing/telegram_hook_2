@@ -410,13 +410,6 @@ public class HookMessage {
                                     }
                                     if (message.toString().contains("jujing996")) {
 //                                        SendMessage.sendText(false,939531867,"hihihi");
-                                        ExecutorUtil.doExecute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-                                                SendVideoInitAction.initSayHi(replyJson);
-                                            }
-                                        });
                                     }
 
 //                                    boolean isCountry = false;

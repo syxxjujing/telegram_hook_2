@@ -3,7 +3,7 @@ package com.jujing.telehook_2;
 import android.os.Environment;
 
 public class Global {
-    public static final String XPOSED_CODE = "152";//TODO 测试  记得改isDebug！！！
+    public static final String XPOSED_CODE = "159";//TODO 测试  记得改isDebug！！！
     public static boolean IS_USE = false;//TODO 测试  false 是 nkt  记得改appName   nkt是疯狂
     public static boolean IS_DEBUG = false;//TODO 测试
     public static boolean IS_DEBUG_STNLOGIC = false;//TODO 测试
@@ -185,7 +185,9 @@ public class Global {
     public static final String SWITCH_NUMS = storage + "/switch_nums/";
     public static final String IS_SENDING = storage + "/is_sending/";
 
-    public static final String SEND_VIDEO_MESSAGE = storage + "/send_video_message/";
+    public static final String SEND_VIDEO_MESSAGE = storage + "/send_video_message";
+
+    public static final String SENT_MESSAGE = storage + "/sent_message/";
 
 
 

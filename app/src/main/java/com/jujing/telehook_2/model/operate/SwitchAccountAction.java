@@ -52,13 +52,13 @@ public class SwitchAccountAction {
         LoggerUtil.logI(TAG, "LaunchActivity 26---->" + LaunchActivity);
     }
 
-    public static void handleSwitch(int num) {
+    public static boolean handleSwitch(int num) {
         String nums = WriteFileUtil.read(Global.SWITCH_NUMS + num);
         LoggerUtil.logI(TAG, "nums 55---->" + nums + "---->" + num);
         if (nums.equals("switched")) {
             LoggerUtil.logI(TAG, "switched 58---->" + nums + "---->" + num);
             LoggerUtil.sendLog7("此账号已切换过！");
-            return;
+            return false;
         }
 
 
@@ -78,9 +78,9 @@ public class SwitchAccountAction {
             }
         });
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             int currentUserId = UsersAndChats.getCurrentUserId(classLoader);
-            LoggerUtil.logI(TAG, "iiii  66---->" + num + "----->" + currentUserId + "---->" + i);
+            LoggerUtil.logI(TAG, "iiii  83---->" + num + "----->" + currentUserId + "---->" + i);
             if (currentUserId != num) {
                 SystemClock.sleep(1000);
             } else {
@@ -100,41 +100,45 @@ public class SwitchAccountAction {
         String phone = (String) XposedHelpers.getObjectField(currentUser, "phone");
         LoggerUtil.logI(TAG, "phone  87---->" + phone);
         WriteFileUtil.write(phone, Global.USER_INFO_PHONE);
+        return true;
 
-        String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-        LoggerUtil.logI(TAG, "replyJson  92---->" + replyJson);
-        boolean b = SendVideoInitAction.initSayHi(replyJson);
-        LoggerUtil.logI(TAG, "bbb  94---->" + b);
-        if (!b) {
-            LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
-            HookActivity.baseActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
-                            .setTitle("消息发送收藏夹失败！请重新再试")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
-                                }
-                            })
-                            .setNegativeButton("取消", null);
-                    builder.show();
-                }
-            });
-            UsersAndChats.isStart = false;
-            return;
-        }
+//        String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
+//        LoggerUtil.logI(TAG, "replyJson  92---->" + replyJson);
+//        boolean b = SendVideoInitAction.initSayHi(replyJson);
+//        LoggerUtil.logI(TAG, "bbb  94---->" + b);
+//        if (!b) {
+//            LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
+//            HookActivity.baseActivity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HookActivity.baseActivity)
+//                            .setTitle("消息发送收藏夹失败！请重新再试")
+//                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    LoggerUtil.logI(TAG, "消息发送收藏夹失败！请重新再试   66--->");
+//                                }
+//                            })
+//                            .setNegativeButton("取消", null);
+//                    builder.show();
+//                }
+//            });
+//            UsersAndChats.isStart = false;
+//            return;
+//        }
     }
 
     public static boolean isSwitch = false;
 
-    public static void handle() {
+    public static boolean handle() {
+
+        boolean flag = false;
         try {
             if (isSwitch) {
                 LoggerUtil.logI(TAG, "isSwitch 120----->" + isSwitch);
                 LoggerUtil.sendLog7("正在切换账号！");
-                return;
+                flag = false;
+                return false;
             }
             isSwitch = true;
             LoggerUtil.sendLog7("已经发送了" + UsersAndChats.sentNum + "个人，开始切换账号");
@@ -150,10 +154,10 @@ public class SwitchAccountAction {
                 WriteFileUtil.write("switched", Global.SWITCH_NUMS + currentUserId);
                 if (currentUserId == 0) {
                     LoggerUtil.sendLog7("当前登录的是第一个账号，正在切换第二个账号");
-                    SwitchAccountAction.handleSwitch(1);
+                    flag = SwitchAccountAction.handleSwitch(1);
                 } else if (currentUserId == 1) {
                     LoggerUtil.sendLog7("当前登录的是第二个账号，正在切换第一个账号");
-                    SwitchAccountAction.handleSwitch(0);
+                    flag = SwitchAccountAction.handleSwitch(0);
                 }
                 LoggerUtil.sendLog7("切换完毕！");
             } else if (getActivatedAccountsCount == 3) {
@@ -162,13 +166,13 @@ public class SwitchAccountAction {
                 WriteFileUtil.write("switched", Global.SWITCH_NUMS + currentUserId);
                 if (currentUserId == 0) {
                     LoggerUtil.sendLog7("当前登录的是第一个账号，正在切换第二个账号");
-                    SwitchAccountAction.handleSwitch(1);
+                    flag = SwitchAccountAction.handleSwitch(1);
                 } else if (currentUserId == 1) {
                     LoggerUtil.sendLog7("当前登录的是第二个账号，正在切换第三个账号");
-                    SwitchAccountAction.handleSwitch(2);
+                    flag =   SwitchAccountAction.handleSwitch(2);
                 } else if (currentUserId == 2) {
                     LoggerUtil.sendLog7("当前登录的是第三个账号，正在切换第一个账号");
-                    SwitchAccountAction.handleSwitch(0);
+                    flag = SwitchAccountAction.handleSwitch(0);
                 }
                 LoggerUtil.sendLog7("切换完毕！");
             }
@@ -177,5 +181,6 @@ public class SwitchAccountAction {
         }
 
         isSwitch = false;
+        return flag;
     }
 }
