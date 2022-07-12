@@ -75,7 +75,7 @@ public class SendVideoInitAction {
                     }
 
 
-//                    long curTime = System.currentTimeMillis() / 1000;
+                    long curTime = System.currentTimeMillis() / 1000;
                     if (content.startsWith("语音")) {
                         SendMessage.sendVoice(getClientUserId(classLoader), path);
 //                        SendMessage.sendVoice(user_id, path);
@@ -90,15 +90,20 @@ public class SendVideoInitAction {
                         SendMessage.sendVideo(false, getClientUserId(classLoader), path);
 //                    SendMessage.sendVideo(false, user_id, path);
                     }
+                    SystemClock.sleep(5000);
                     for (int i = 0; i < 60 * 5; i++) {
                         SayHiMessageBean bean = queryMessages();
-                        boolean contains = midList.contains(bean.getMid());
-                        LoggerUtil.logI(TAG, "bean  77---->" + bean + "---->" + i + "--->" + contains);
-                        if (bean.getMid() > 0) {
-                            if (!contains) {
-                                break;
+                        int date = bean.getDate();
+//                        if (date>curTime){
+                            boolean contains = midList.contains(bean.getMid());
+                            LoggerUtil.logI(TAG, "bean  99---->" + bean + "---->" + i + "--->" + contains+"--->"+date+"---->"+curTime+"---->"+j);
+                            if (bean.getMid() > 0) {
+                                if (!contains) {
+                                    break;
+                                }
                             }
-                        }
+//                        }
+
 //                        if (curTime <= bean.getDate() && bean.getMid() > 0) {
 //                            break;
 //                        }

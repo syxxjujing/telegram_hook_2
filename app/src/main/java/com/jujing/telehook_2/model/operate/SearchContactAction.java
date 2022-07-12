@@ -34,13 +34,14 @@ public class SearchContactAction {
 
     public static void handle(String path) {
         try {
+            // 18:26:34 重新开始的
             LoggerUtil.logI(TAG, "isTranning  37---->" + isTranning + "----->" + UsersAndChats.isStart);
 
             if (UsersAndChats.isStart) {
                 LoggerUtil.sendLog7("正在转发，请稍候...");
                 return;
             }
-            if (!isTranning){//没有运行过，就复位
+            if (!isTranning) {//没有运行过，就复位
                 UsersAndChats.sentNum = 0;
                 firstIdList.clear();
             }
@@ -63,13 +64,13 @@ public class SearchContactAction {
 
         Object currentUser = UsersAndChats.getCurrentUser();
         long curId = XposedHelpers.getLongField(currentUser, "id");
-        LoggerUtil.logI(TAG, "stringList  38---->" + stringList.size() + "----->" + index+"---->"+curId);
+        LoggerUtil.logI(TAG, "stringList  38---->" + stringList.size() + "----->" + index + "---->" + curId);
         LoggerUtil.sendLog7("共有" + stringList.size() + "个好友");
         String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
         if (judgeSayHiContent1(replyJson)) {
             return;
         }
-        boolean b = SendVideoInitAction.initSayHi(replyJson,1);
+        boolean b = SendVideoInitAction.initSayHi(replyJson, 1);
         LoggerUtil.logI(TAG, "bbb  50---->" + b);
         if (!b) {
             LoggerUtil.sendLog7("消息发送收藏夹失败！请重新再试");
@@ -93,10 +94,9 @@ public class SearchContactAction {
         }
 
 
-
         for (int i = 0; i < stringList.size(); i++) {
             String friends = stringList.get(i);
-            LoggerUtil.logI(TAG, "friends 55 :" + friends + "-----" + i + "---->" + UsersAndChats.sentNum);
+            LoggerUtil.logI(TAG, "friends 55 :" + friends + "-----" + i + "---->" + UsersAndChats.sentNum + "--->" + firstIdList.size());
 
             if (judgeSent(friends)) {
                 LoggerUtil.logI(TAG, "以前发送过了 51 :" + friends + "-----" + i);
@@ -105,13 +105,12 @@ public class SearchContactAction {
             }
 
 
-
             LoggerUtil.sendLog7("开始搜索第" + (i + 1) + "个好友：" + friends);
 
             WriteFileUtil.write("0", Global.IS_SENDING + friends);
 //                isSendFinished = false;
             SearchContactAction searchContactAction = new SearchContactAction();
-            searchContactAction.seachUsers(friends,1);
+            searchContactAction.seachUsers(friends, 1);
             for (int j = 0; j < 60 * 60; j++) {
                 String isSending = WriteFileUtil.read(Global.IS_SENDING + friends);
 
@@ -140,11 +139,25 @@ public class SearchContactAction {
             }
 
 
-            boolean isSwitch = judgeSwitch();
-            LoggerUtil.logI(TAG, "isSwitch 122 :" + isSwitch + "--->" + friends + "-----" + i);
-            if (isSwitch) {
-                LoggerUtil.logI(TAG, "该发第二轮了 isSwitch 135 :" + isSwitch + "--->" + friends + "-----" + i + "--->" + UsersAndChats.sentNum);
-                break;//该发第二轮了
+            int cash = 0;
+            try {
+                cash = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM_CASH));
+            } catch (Exception e) {
+
+            }
+            LoggerUtil.logI(TAG, "cash  144---->" + cash + "---->" + UsersAndChats.sentNum);
+            if (cash == UsersAndChats.sentNum || UsersAndChats.sentNum + 1 == cash) {
+                //日志有个不觉明历的问题。  sentNum莫名其妙减一
+                LoggerUtil.logI(TAG, "日志有个不觉明历的问题  151---->" + cash + "---->" + UsersAndChats.sentNum);
+            } else {
+                LoggerUtil.logI(TAG, "cash  152---->" + cash + "---->" + UsersAndChats.sentNum);
+                WriteFileUtil.write(UsersAndChats.sentNum + "", Global.SWITCH_NUM_CASH);
+                boolean isSwitch = judgeSwitch();
+                LoggerUtil.logI(TAG, "isSwitch 122 :" + isSwitch + "--->" + friends + "-----" + i);
+                if (isSwitch) {
+                    LoggerUtil.logI(TAG, "该发第二轮了 isSwitch 135 :" + isSwitch + "--->" + friends + "-----" + i + "--->" + UsersAndChats.sentNum);
+                    break;//该发第二轮了
+                }
             }
 
 
@@ -173,23 +186,22 @@ public class SearchContactAction {
             LoggerUtil.sendLog7("第一轮打招呼发送完毕，准备切换账号。");
             SystemClock.sleep(10000);
             boolean isSwitch = SwitchAccountAction.handle();
-            LoggerUtil.logI(TAG, "isSwitch   164---"+isSwitch);
-            if (isSwitch){
+            LoggerUtil.logI(TAG, "isSwitch   164---" + isSwitch);
+            if (isSwitch) {
                 SystemClock.sleep(2000);
+                firstIdList.clear();
                 tran(stringList, ++index);
                 return;
             }
-
-
             return;
         }
-        SendVideoInitAction.initSayHi(replyJson_2,2);
+        SendVideoInitAction.initSayHi(replyJson_2, 2);
         String is_only_unread = WriteFileUtil.read(Global.IS_ONLY_UNREAD);
         LoggerUtil.logI(TAG, "is_only_unread   113--->" + is_only_unread);
         List<Long> readList = UserReadAction.checkReadNum();
         LoggerUtil.logI(TAG, "firstIdList 112 :" + firstIdList.size() + "----->" + is_only_unread + "---->" + readList.size());
         LoggerUtil.sendLog7("第二轮共有" + firstIdList.size() + "个好友");
-        UsersAndChats.sentNum = 0;
+//        UsersAndChats.sentNum = 0;
         for (int i = 0; i < firstIdList.size(); i++) {
             long firstId = firstIdList.get(i);
             if (is_only_unread.equals("true")) {
@@ -208,9 +220,10 @@ public class SearchContactAction {
         LoggerUtil.sendLog7("第二轮打招呼发送完毕，准备切换账号。");
         SystemClock.sleep(10000);
         boolean isSwitch = SwitchAccountAction.handle();
-        LoggerUtil.logI(TAG, "isSwitch   199---"+isSwitch);
-        if (isSwitch){
+        LoggerUtil.logI(TAG, "isSwitch   199---" + isSwitch);
+        if (isSwitch) {
             SystemClock.sleep(2000);
+            firstIdList.clear();
             tran(stringList, ++index);
             return;
         }
@@ -386,6 +399,7 @@ public class SearchContactAction {
                         ArrayList chats = (ArrayList) XposedHelpers.getObjectField(response, "chats");
 
                         saveSearchRespondUsers(chats, users);
+                        boolean isHave = false;
                         for (int a = 0; a < users.size(); a++) {
                             Object user = users.get(a);
 //                            HookUtil.printAllFieldForSuperclass(user);
@@ -402,7 +416,7 @@ public class SearchContactAction {
                                 LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
                                 firstIdList.add(id);
                                 //保存用户
-                                saveSearchUsers(id, txt,round);
+                                saveSearchUsers(id, txt, round);
 //                                SendMessage.sendMessage0(currentAccount, "12346", id);
 //                                addContact(user);
 //                                new Thread(new Runnable() {
@@ -412,6 +426,8 @@ public class SearchContactAction {
 //                                        SendMessage.sendMessage("hell",id);
 //                                    }
 //                                }).start();
+                                isHave = true;
+                                break;
 
                             } else if (t.equals(username.toLowerCase())) {
                                 firstIdList.add(id);
@@ -419,11 +435,16 @@ public class SearchContactAction {
                                 LoggerUtil.sendLog7("搜索到用户:" + username + " id:" + id + " first_name:" + first_name);
 
                                 saveSearchUsers(id, txt, round);
+                                isHave = true;
                             } else {
-                                WriteFileUtil.write("1", Global.IS_SENDING + txt);
-                                LoggerUtil.sendLog7("搜索失败！");
+
                             }
 
+                        }
+
+                        if (!isHave) {
+                            WriteFileUtil.write("1", Global.IS_SENDING + txt);
+                            LoggerUtil.sendLog7("搜索失败！");
                         }
                     } catch (Exception e) {
                         LoggerUtil.logI(TAG, "eee  92---->" + CrashHandler.getInstance().printCrash(e));
@@ -513,7 +534,7 @@ public class SearchContactAction {
                             @Override
                             public void run() {
                                 String replyJson = WriteFileUtil.read(Global.STORAGE_LOCAL_REPLY_JSON);
-                                sendMission(user, replyJson, txt,round);
+                                sendMission(user, replyJson, txt, round);
                             }
                         }).start();
 
@@ -535,7 +556,7 @@ public class SearchContactAction {
     public static void sendMission(long user_id, String replyJson, String txt, int round) {
         try {
 
-            LoggerUtil.logI(TAG, "replyJson 465 :" + replyJson + "---->" + user_id);
+            LoggerUtil.logI(TAG, "replyJson 465 :" + replyJson + "---->" + user_id + "--->" + round);
 
 //            try {
 //                int switch_num = Integer.parseInt(WriteFileUtil.read(Global.SWITCH_NUM));
@@ -550,9 +571,10 @@ public class SearchContactAction {
 //            } catch (Exception e) {
 //                LoggerUtil.logI(TAG, "eee  478---->" + CrashHandler.getInstance().printCrash(e));
 //            }
-
-            UsersAndChats.sentNum++;
-            LoggerUtil.sendLog7("开始给第" + UsersAndChats.sentNum + "个人发消息");
+            if (round == 1) {
+                UsersAndChats.sentNum++;
+                LoggerUtil.sendLog7("开始给第" + UsersAndChats.sentNum + "个人发消息");
+            }
 
             JSONArray jsonArray = new JSONArray(replyJson);
             for (int j = 0; j < jsonArray.length(); j++) {
@@ -567,7 +589,7 @@ public class SearchContactAction {
                 }
 
 
-                if (sendM(user_id, j, content, TAG,round)) {
+                if (sendM(user_id, j, content, TAG, round)) {
                     continue;
                 }
 
@@ -602,7 +624,7 @@ public class SearchContactAction {
             LoggerUtil.logI(TAG, "e 327 :" + CrashHandler.getInstance().printCrash(e) + "---->" + user_id);
         }
 
-        LoggerUtil.logI(TAG, "end  532---->" + user_id);
+        LoggerUtil.logI(TAG, "end  532---->" + user_id + "---->" + txt);
         WriteFileUtil.write("1", Global.IS_SENDING + txt);
 
 
